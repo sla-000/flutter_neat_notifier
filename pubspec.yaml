@@ -1,5 +1,5 @@
 name: neat_notifier
-description: "A new Flutter package project."
+description: "A lightweight, feature-rich state management package for Flutter that simplifies handling of signals, events, and async states (loading/error) using ValueNotifier."
 version: 0.0.1
 homepage:
 
