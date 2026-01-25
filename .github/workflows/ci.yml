@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.0' # Matches pubspec.yaml minimum
+          channel: 'stable'
+
+      - name: Install dependencies (Root)
+        run: flutter pub get
+
+      - name: Analyze (Root)
+        run: dart analyze
+
+      - name: Run tests (Root)
+        run: flutter test
+
+      - name: Install dependencies (Example)
+        run: |
+          cd example
+          flutter pub get
+
+      - name: Analyze (Example)
+        run: |
+          cd example
+          dart analyze
+
+      - name: Run tests (Example)
+        run: |
+          cd example
+          flutter test
