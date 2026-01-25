@@ -39,12 +39,7 @@ class MyHomePage extends StatelessWidget {
       errorBuilder: (context, error, stackTrace, notifier) {
         return AppErrorWidget(error: error, onRetry: notifier.increment1);
       },
-      loadingBuilder: (context, notifier) {
-        return Scaffold(
-          appBar: AppBar(title: const Text('Loading...')),
-          body: const Center(child: CircularProgressIndicator()),
-        );
-      },
+      loadingBuilder: (context, notifier) => const AppLoadingWidget(),
       onEvent: (context, notifier, event) {
         final message = switch (event) {
           CounterMilestoneEvent(message: final m) => m,
@@ -174,6 +169,18 @@ class AppErrorWidget extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AppLoadingWidget extends StatelessWidget {
+  const AppLoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Loading...')),
+      body: const Center(child: CircularProgressIndicator()),
     );
   }
 }
