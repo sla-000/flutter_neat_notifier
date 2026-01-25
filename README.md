@@ -1,5 +1,7 @@
 # neat_notifier
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A lightweight, feature-rich state management package for Flutter that builds upon `ValueNotifier` to provide a robust solution for handling states, one-time events, and asynchronous operations with built-in loading and error management.
 
 ## Features
