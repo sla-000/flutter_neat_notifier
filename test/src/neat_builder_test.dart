@@ -20,6 +20,12 @@ class TestValueNotifier extends NeatNotifier<int, dynamic> {
     isDisposed = true;
     super.dispose();
   }
+
+  // Public wrappers for testing @protected methods
+  void testSetLoading(bool value) => setLoading(value);
+  void testSetError(Object error, [StackTrace? stackTrace]) =>
+      setError(error, stackTrace);
+  void testClearError() => clearError();
 }
 
 void main() {
@@ -221,7 +227,7 @@ THEN: the normal builder is restored''',
 
       expect(find.text('Error UI'), findsOneWidget);
 
-      notifier.clearError();
+      notifier.testClearError();
       await tester.pump();
 
       expect(find.text('Normal Content'), findsOneWidget);
@@ -250,12 +256,12 @@ THEN: the loadingBuilder is shown''',
 
       expect(find.text('Normal Content'), findsOneWidget);
 
-      notifier.setLoading(true);
+      notifier.testSetLoading(true);
       await tester.pump();
 
       expect(find.text('Loading UI'), findsOneWidget);
 
-      notifier.setLoading(false);
+      notifier.testSetLoading(false);
       await tester.pump();
 
       expect(find.text('Normal Content'), findsOneWidget);
@@ -374,13 +380,13 @@ THEN: the child is preserved and passed to all builders''',
       expect(find.byKey(childKey), findsOneWidget);
 
       // Loading state
-      notifier.setLoading(true);
+      notifier.testSetLoading(true);
       await tester.pump();
       expect(find.text('Loading'), findsOneWidget);
       expect(find.byKey(childKey), findsOneWidget);
 
       // Error state
-      notifier.setLoading(false);
+      notifier.testSetLoading(false);
       notifier.triggerError();
       await tester.pump();
       expect(find.text('Error'), findsOneWidget);

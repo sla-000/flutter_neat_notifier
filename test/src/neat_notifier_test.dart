@@ -3,6 +3,12 @@ import 'package:neat_notifier/neat_notifier.dart';
 
 class TestNotifier extends NeatNotifier<int, dynamic> {
   TestNotifier() : super(0);
+
+  // Public wrappers for testing @protected methods
+  void testSetLoading(bool value) => setLoading(value);
+  void testSetError(Object error, [StackTrace? stackTrace]) =>
+      setError(error, stackTrace);
+  void testClearError() => clearError();
 }
 
 void main() {
@@ -32,7 +38,7 @@ THEN: it updates error and stackTrace and notifies listeners''',
 
         final error = Exception('test');
         final stackTrace = StackTrace.current;
-        notifier.setError(error, stackTrace);
+        notifier.testSetError(error, stackTrace);
 
         expect(notifier.error, error);
         expect(notifier.stackTrace, stackTrace);
@@ -46,12 +52,12 @@ WHEN: clearError is called
 THEN: it resets error and stackTrace and notifies listeners''',
       () {
         final notifier = TestNotifier();
-        notifier.setError(Exception('test'));
+        notifier.testSetError(Exception('test'));
 
         int notifyCount = 0;
         notifier.addListener(() => notifyCount++);
 
-        notifier.clearError();
+        notifier.testClearError();
 
         expect(notifier.error, isNull);
         expect(notifier.stackTrace, isNull);
@@ -68,11 +74,11 @@ THEN: it updates isLoading and notifies listeners''',
         int notifyCount = 0;
         notifier.addListener(() => notifyCount++);
 
-        notifier.setLoading(true);
+        notifier.testSetLoading(true);
         expect(notifier.isLoading, isTrue);
         expect(notifyCount, 1);
 
-        notifier.setLoading(false);
+        notifier.testSetLoading(false);
         expect(notifier.isLoading, isFalse);
         expect(notifyCount, 2);
       },

@@ -32,15 +32,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return NeatBuilder<CounterNotifier, CounterState, CounterEvent>(
       create: (context) => CounterNotifier(),
-      onEvent: (context, notifier, event) {
-        final message = switch (event) {
-          CounterMilestoneEvent(message: final m) => m,
-        };
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: Colors.deepPurple),
-        );
-      },
+      onEvent: (context, notifier, event) => _showSnackbar(event, context),
       rebuildWhen: (prev, curr) =>
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
       errorBuilder: (context, error, stackTrace, notifier, child) =>
@@ -104,7 +96,7 @@ class MyHomePage extends StatelessWidget {
                 heroTag: 'btn1',
                 onPressed: notifier.isLoading ? null : notifier.increment1,
                 tooltip: 'Increment Counter 1 (Async)',
-                child: const Icon(Icons.cloud_upload),
+                child: const Text('1'),
               ),
               const SizedBox(height: 10),
               FloatingActionButton(
@@ -112,7 +104,7 @@ class MyHomePage extends StatelessWidget {
                 onPressed: notifier.increment2,
                 tooltip: 'Increment Counter 2',
                 backgroundColor: Colors.grey,
-                child: const Icon(Icons.exposure_plus_2),
+                child: const Text('2'),
               ),
               const SizedBox(height: 10),
               FloatingActionButton(
@@ -120,13 +112,23 @@ class MyHomePage extends StatelessWidget {
                 onPressed: notifier.increment3,
                 tooltip: 'Increment Counter 3',
                 backgroundColor: Colors.blueGrey,
-                child: const Icon(Icons.add),
+                child: const Text('3'),
               ),
             ],
           ),
         );
       },
       child: const HeavyWidgetThatWeDoNotWantToRebuild(),
+    );
+  }
+
+  void _showSnackbar(CounterEvent event, BuildContext context) {
+    final message = switch (event) {
+      CounterMilestoneEvent(message: final m) => m,
+    };
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.deepPurple),
     );
   }
 }

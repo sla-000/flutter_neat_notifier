@@ -35,6 +35,7 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// Sets the loading state.
   ///
   /// This will trigger a notification to listeners.
+  @protected
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -62,6 +63,7 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// Sets the current error and an optional stack trace.
   ///
   /// This will trigger a notification to listeners.
+  @protected
   void setError(Object? error, [StackTrace? stackTrace]) {
     _error = error;
     _stackTrace = stackTrace;
@@ -71,6 +73,7 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// Clears the current error and stack trace.
   ///
   /// This will trigger a notification to listeners.
+  @protected
   void clearError() {
     _error = null;
     _stackTrace = null;
