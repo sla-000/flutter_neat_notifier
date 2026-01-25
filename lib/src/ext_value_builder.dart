@@ -45,11 +45,13 @@ class ExtValueBuilder<V extends ExtValueNotifier<S, E>, S, E>
     Object error,
     StackTrace? stackTrace,
     V notifier,
+    Widget? child,
   )?
   errorBuilder;
 
   /// Optional builder that is called when the notifier is in a loading state.
-  final Widget Function(BuildContext context, V notifier)? loadingBuilder;
+  final Widget Function(BuildContext context, V notifier, Widget? child)?
+  loadingBuilder;
 
   /// Optional callback to control when the widget rebuilds.
   ///
@@ -59,7 +61,7 @@ class ExtValueBuilder<V extends ExtValueNotifier<S, E>, S, E>
   /// Optional callback called when a one-time event is emitted.
   final void Function(BuildContext context, V notifier, E event)? onEvent;
 
-  /// Optional static child widget that is passed to the [builder].
+  /// Optional static child widget that is passed to the builders.
   final Widget? child;
 
   @override
@@ -113,10 +115,11 @@ class _ExtValueBuilderState<V extends ExtValueNotifier<S, E>, S, E>
         _notifier.error!,
         _notifier.stackTrace,
         _notifier,
+        widget.child,
       );
     }
     if (_notifier.isLoading && widget.loadingBuilder != null) {
-      return widget.loadingBuilder!(context, _notifier);
+      return widget.loadingBuilder!(context, _notifier, widget.child);
     }
     return widget.builder(context, _notifier, widget.child);
   }

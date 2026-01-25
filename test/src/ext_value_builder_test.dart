@@ -182,7 +182,7 @@ THEN: the errorBuilder is shown''',
           child: ExtValueBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, __, ___) => const Text('Normal Content'),
-            errorBuilder: (context, error, stackTrace, n) {
+            errorBuilder: (context, error, stackTrace, n, child) {
               return Text('Error: $error');
             },
           ),
@@ -212,7 +212,7 @@ THEN: the normal builder is restored''',
           child: ExtValueBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, __, ___) => const Text('Normal Content'),
-            errorBuilder: (context, error, stackTrace, n) {
+            errorBuilder: (context, error, stackTrace, n, child) {
               return const Text('Error UI');
             },
           ),
@@ -241,7 +241,7 @@ THEN: the loadingBuilder is shown''',
           child: ExtValueBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, __, ___) => const Text('Normal Content'),
-            loadingBuilder: (context, n) {
+            loadingBuilder: (context, n, child) {
               return const Text('Loading UI');
             },
           ),
@@ -276,8 +276,9 @@ THEN: it automatically manages loading and error states''',
             create: (_) => notifier,
             builder: (_, n, __) =>
                 Text('Loading: ${n.isLoading}, Error: ${n.error != null}'),
-            errorBuilder: (_, __, ___, ____) => const Text('Error State'),
-            loadingBuilder: (_, __) => const Text('Loading State'),
+            errorBuilder: (_, __, ___, ____, _____) =>
+                const Text('Error State'),
+            loadingBuilder: (_, __, ___) => const Text('Loading State'),
           ),
         ),
       );
@@ -340,6 +341,50 @@ THEN: the onEvent callback is triggered''',
       await tester.pump(); // Pump to process stream
 
       expect(receivedEvent, 'test_event');
+    },
+  );
+
+  testWidgets(
+    '''GIVEN: ExtValueBuilder with a shared child
+WHEN: switching between loading, error, and normal states
+THEN: the child is preserved and passed to all builders''',
+    (WidgetTester tester) async {
+      final notifier = TestValueNotifier();
+      const childKey = Key('shared-child');
+      const sharedChild = Text('Shared Child', key: childKey);
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExtValueBuilder<TestValueNotifier, int, dynamic>(
+            create: (_) => notifier,
+            child: sharedChild,
+            builder: (_, __, child) =>
+                Column(children: [const Text('Normal'), child!]),
+            loadingBuilder: (_, __, child) =>
+                Column(children: [const Text('Loading'), child!]),
+            errorBuilder: (_, __, ___, ____, child) =>
+                Column(children: [const Text('Error'), child!]),
+          ),
+        ),
+      );
+
+      // Normal state
+      expect(find.text('Normal'), findsOneWidget);
+      expect(find.byKey(childKey), findsOneWidget);
+
+      // Loading state
+      notifier.setLoading(true);
+      await tester.pump();
+      expect(find.text('Loading'), findsOneWidget);
+      expect(find.byKey(childKey), findsOneWidget);
+
+      // Error state
+      notifier.setLoading(false);
+      notifier.triggerError();
+      await tester.pump();
+      expect(find.text('Error'), findsOneWidget);
+      expect(find.byKey(childKey), findsOneWidget);
     },
   );
 }

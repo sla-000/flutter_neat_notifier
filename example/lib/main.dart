@@ -43,9 +43,9 @@ class MyHomePage extends StatelessWidget {
       },
       rebuildWhen: (prev, curr) =>
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
-      errorBuilder: (context, error, stackTrace, notifier) =>
+      errorBuilder: (context, error, stackTrace, notifier, child) =>
           AppErrorWidget(error: error, onRetry: notifier.increment1),
-      loadingBuilder: (context, notifier) => const AppLoadingWidget(),
+      loadingBuilder: (context, notifier, child) => const AppLoadingWidget(),
       builder: (context, notifier, child) {
         final state = notifier.value;
         // This print helps demonstrate when the widget rebuilds
