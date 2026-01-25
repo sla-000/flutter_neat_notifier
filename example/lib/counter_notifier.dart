@@ -12,8 +12,8 @@ class CounterMilestoneEvent extends CounterEvent {
 }
 
 // 3. Define your Notifier (extending NeatNotifier with CounterEvent)
-class CounterValueNotifier extends NeatNotifier<CounterState, CounterEvent> {
-  CounterValueNotifier() : super((counter1: 0, counter2: 0, counter3: 0));
+class CounterNotifier extends NeatNotifier<CounterState, CounterEvent> {
+  CounterNotifier() : super((counter1: 0, counter2: 0, counter3: 0));
 
   Future<void> increment1() => runTask(() async {
     // Simulate async repository call

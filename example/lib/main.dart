@@ -30,8 +30,8 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NeatBuilder<CounterValueNotifier, CounterState, CounterEvent>(
-      create: (context) => CounterValueNotifier(),
+    return NeatBuilder<CounterNotifier, CounterState, CounterEvent>(
+      create: (context) => CounterNotifier(),
       onEvent: (context, notifier, event) {
         final message = switch (event) {
           CounterMilestoneEvent(message: final m) => m,
