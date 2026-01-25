@@ -187,7 +187,7 @@ THEN: the errorBuilder is shown''',
           textDirection: TextDirection.ltr,
           child: NeatBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
-            builder: (_, __, ___) => const Text('Normal Content'),
+            builder: (_, _, _) => const Text('Normal Content'),
             errorBuilder: (context, error, stackTrace, n, child) {
               return Text('Error: $error');
             },
@@ -217,7 +217,7 @@ THEN: the normal builder is restored''',
           textDirection: TextDirection.ltr,
           child: NeatBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
-            builder: (_, __, ___) => const Text('Normal Content'),
+            builder: (_, _, _) => const Text('Normal Content'),
             errorBuilder: (context, error, stackTrace, n, child) {
               return const Text('Error UI');
             },
@@ -246,7 +246,7 @@ THEN: the loadingBuilder is shown''',
           textDirection: TextDirection.ltr,
           child: NeatBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
-            builder: (_, __, ___) => const Text('Normal Content'),
+            builder: (_, _, _) => const Text('Normal Content'),
             loadingBuilder: (context, n, child) {
               return const Text('Loading UI');
             },
@@ -280,11 +280,10 @@ THEN: it automatically manages loading and error states''',
           textDirection: TextDirection.ltr,
           child: NeatBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
-            builder: (_, n, __) =>
+            builder: (_, n, _) =>
                 Text('Loading: ${n.isLoading}, Error: ${n.error != null}'),
-            errorBuilder: (_, __, ___, ____, _____) =>
-                const Text('Error State'),
-            loadingBuilder: (_, __, ___) => const Text('Loading State'),
+            errorBuilder: (_, _, _, _, _) => const Text('Error State'),
+            loadingBuilder: (_, _, _) => const Text('Loading State'),
           ),
         ),
       );
@@ -335,7 +334,7 @@ THEN: the onEvent callback is triggered''',
           textDirection: TextDirection.ltr,
           child: NeatBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
-            builder: (_, __, ___) => const Text('Content'),
+            builder: (_, _, _) => const Text('Content'),
             onEvent: (context, notifier, event) {
               receivedEvent = event as String;
             },
@@ -365,11 +364,11 @@ THEN: the child is preserved and passed to all builders''',
           child: NeatBuilder<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             child: sharedChild,
-            builder: (_, __, child) =>
+            builder: (_, _, child) =>
                 Column(children: [const Text('Normal'), child!]),
-            loadingBuilder: (_, __, child) =>
+            loadingBuilder: (_, _, child) =>
                 Column(children: [const Text('Loading'), child!]),
-            errorBuilder: (_, __, ___, ____, child) =>
+            errorBuilder: (_, _, _, _, child) =>
                 Column(children: [const Text('Error'), child!]),
           ),
         ),
