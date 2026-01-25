@@ -5,9 +5,9 @@ import 'ext_value_notifier.dart';
 /// A widget that manages the lifecycle of an [ExtValueNotifier] and rebuilds
 /// its children when the notifier updates based on custom logic.
 ///
-/// [ExtNotifier] handles the creation and disposal of the [notifier] automatically.
-class ExtNotifier<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
-  /// Creates an [ExtNotifier].
+/// [ExtValueBuilder] handles the creation and disposal of the [notifier] automatically.
+class ExtValueBuilder<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
+  /// Creates an [ExtValueBuilder].
   ///
   /// The [create] callback is used to instantiate the [ExtValueNotifier].
   /// The [builder] callback is used to build the widget tree. It receives
@@ -16,7 +16,7 @@ class ExtNotifier<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
   /// The [rebuildWhen] callback allows for fine-grained control over rebuilds
   /// by comparing the previous and current state.
   /// The [errorBuilder] is called when the notifier has an active error.
-  const ExtNotifier({
+  const ExtValueBuilder({
     super.key,
     required this.create,
     required this.builder,
@@ -56,11 +56,11 @@ class ExtNotifier<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
   final Widget? child;
 
   @override
-  State<ExtNotifier<V, S>> createState() => _ExtNotifierState<V, S>();
+  State<ExtValueBuilder<V, S>> createState() => _ExtValueBuilderState<V, S>();
 }
 
-class _ExtNotifierState<V extends ExtValueNotifier<S>, S>
-    extends State<ExtNotifier<V, S>> {
+class _ExtValueBuilderState<V extends ExtValueNotifier<S>, S>
+    extends State<ExtValueBuilder<V, S>> {
   late final V _notifier;
   late S _previousState;
 

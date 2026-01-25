@@ -25,7 +25,7 @@ class TestValueNotifier extends ExtValueNotifier<int> {
 
 void main() {
   testWidgets(
-    '''GIVEN: ExtNotifier is initialized
+    '''GIVEN: ExtValueBuilder is initialized
 WHEN: it builds for the first time
 THEN: the notifier is created and initial UI is shown''',
     (WidgetTester tester) async {
@@ -34,7 +34,7 @@ THEN: the notifier is created and initial UI is shown''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) {
               capturedNotifier = TestValueNotifier();
               return capturedNotifier!;
@@ -52,7 +52,7 @@ THEN: the notifier is created and initial UI is shown''',
   );
 
   testWidgets(
-    '''GIVEN: ExtNotifier is active
+    '''GIVEN: ExtValueBuilder is active
 WHEN: the notifier updates its state
 THEN: the widget rebuilds with new state''',
     (WidgetTester tester) async {
@@ -61,7 +61,7 @@ THEN: the widget rebuilds with new state''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) => notifier,
             builder: (context, n, child) {
               return Text('Count: ${n.value}');
@@ -78,7 +78,7 @@ THEN: the widget rebuilds with new state''',
   );
 
   testWidgets(
-    '''GIVEN: ExtNotifier is in the tree
+    '''GIVEN: ExtValueBuilder is in the tree
 WHEN: the widget is removed
 THEN: the notifier is disposed''',
     (WidgetTester tester) async {
@@ -87,7 +87,7 @@ THEN: the notifier is disposed''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) {
               capturedNotifier = TestValueNotifier();
               return capturedNotifier!;
@@ -108,7 +108,7 @@ THEN: the notifier is disposed''',
   );
 
   testWidgets(
-    '''GIVEN: ExtNotifier with rebuildWhen optimization
+    '''GIVEN: ExtValueBuilder with rebuildWhen optimization
 WHEN: a watched value changes
 THEN: the widget rebuilds''',
     (WidgetTester tester) async {
@@ -118,7 +118,7 @@ THEN: the widget rebuilds''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) => notifier,
             rebuildWhen: (prev, curr) => curr > prev,
             builder: (context, n, child) {
@@ -140,7 +140,7 @@ THEN: the widget rebuilds''',
   );
 
   testWidgets(
-    '''GIVEN: ExtNotifier with rebuildWhen optimization
+    '''GIVEN: ExtValueBuilder with rebuildWhen optimization
 WHEN: an ignored value changes
 THEN: the widget does NOT rebuild''',
     (WidgetTester tester) async {
@@ -150,7 +150,7 @@ THEN: the widget does NOT rebuild''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) => notifier,
             rebuildWhen: (prev, curr) => false, // Never rebuild
             builder: (context, n, child) {
@@ -171,7 +171,7 @@ THEN: the widget does NOT rebuild''',
   );
 
   testWidgets(
-    '''GIVEN: ExtNotifier with errorBuilder
+    '''GIVEN: ExtValueBuilder with errorBuilder
 WHEN: the notifier has an error
 THEN: the errorBuilder is shown''',
     (WidgetTester tester) async {
@@ -180,7 +180,7 @@ THEN: the errorBuilder is shown''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) => notifier,
             builder: (_, __, ___) => const Text('Normal Content'),
             errorBuilder: (context, error, stackTrace, n) {
@@ -200,7 +200,7 @@ THEN: the errorBuilder is shown''',
   );
 
   testWidgets(
-    '''GIVEN: ExtNotifier in error state
+    '''GIVEN: ExtValueBuilder in error state
 WHEN: the error is cleared
 THEN: the normal builder is restored''',
     (WidgetTester tester) async {
@@ -210,7 +210,7 @@ THEN: the normal builder is restored''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) => notifier,
             builder: (_, __, ___) => const Text('Normal Content'),
             errorBuilder: (context, error, stackTrace, n) {
@@ -230,7 +230,7 @@ THEN: the normal builder is restored''',
   );
 
   testWidgets(
-    '''GIVEN: ExtNotifier with loadingBuilder
+    '''GIVEN: ExtValueBuilder with loadingBuilder
 WHEN: the notifier is loading
 THEN: the loadingBuilder is shown''',
     (WidgetTester tester) async {
@@ -239,7 +239,7 @@ THEN: the loadingBuilder is shown''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) => notifier,
             builder: (_, __, ___) => const Text('Normal Content'),
             loadingBuilder: (context, n) {
@@ -273,7 +273,7 @@ THEN: it automatically manages loading and error states''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: ExtNotifier<TestValueNotifier, int>(
+          child: ExtValueBuilder<TestValueNotifier, int>(
             create: (_) => notifier,
             builder: (_, n, __) =>
                 Text('Loading: ${n.isLoading}, Error: ${n.error != null}'),

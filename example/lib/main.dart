@@ -68,8 +68,8 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 3. Use ExtNotifier with the new ValueNotifier and State
-    return ExtNotifier<CounterValueNotifier, CounterState>(
+    // 3. Use ExtValueBuilder with the new ValueNotifier and State
+    return ExtValueBuilder<CounterValueNotifier, CounterState>(
       create: (context) => CounterValueNotifier(),
       // 4. Optimization: Rebuild when EITHER counter1 OR counter2 change
       rebuildWhen: (prev, curr) =>
