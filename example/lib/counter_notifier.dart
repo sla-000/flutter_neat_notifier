@@ -1,9 +1,9 @@
 import 'package:neat_notifier/neat_notifier.dart';
 
-// 1. Define your State (using a Record for simplicity and immutability)
+// Define your State, everything is acceptable, record, equatable, freezed, etc.
 typedef CounterState = ({int counter1, int counter2, int counter3});
 
-// 2. Define your Events (using a sealed class for type-safe handling)
+// Define your Events
 sealed class CounterEvent {}
 
 class CounterMilestoneEvent extends CounterEvent {
@@ -11,7 +11,6 @@ class CounterMilestoneEvent extends CounterEvent {
   final String message;
 }
 
-// 3. Define your Notifier (extending NeatNotifier with CounterEvent)
 class CounterNotifier extends NeatNotifier<CounterState, CounterEvent> {
   CounterNotifier() : super((counter1: 0, counter2: 0, counter3: 0));
 
