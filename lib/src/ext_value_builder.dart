@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'ext_value_notifier.dart';
@@ -6,7 +7,8 @@ import 'ext_value_notifier.dart';
 /// its children when the notifier updates based on custom logic.
 ///
 /// [ExtValueBuilder] handles the creation and disposal of the [notifier] automatically.
-class ExtValueBuilder<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
+class ExtValueBuilder<V extends ExtValueNotifier<S, E>, S, E>
+    extends StatefulWidget {
   /// Creates an [ExtValueBuilder].
   ///
   /// The [create] callback is used to instantiate the [ExtValueNotifier].
@@ -16,6 +18,7 @@ class ExtValueBuilder<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
   /// The [rebuildWhen] callback allows for fine-grained control over rebuilds
   /// by comparing the previous and current state.
   /// The [errorBuilder] is called when the notifier has an active error.
+  /// The [onEvent] callback is called when the notifier emits a one-time event.
   const ExtValueBuilder({
     super.key,
     required this.create,
@@ -24,6 +27,7 @@ class ExtValueBuilder<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
     this.rebuildWhen,
     this.errorBuilder,
     this.loadingBuilder,
+    this.onEvent,
   });
 
   /// Function to create the [ExtValueNotifier] instance.
@@ -52,17 +56,22 @@ class ExtValueBuilder<V extends ExtValueNotifier<S>, S> extends StatefulWidget {
   /// Comparing [prev] and [curr] allows for optimized rebuilds.
   final bool Function(S prev, S curr)? rebuildWhen;
 
+  /// Optional callback called when a one-time event is emitted.
+  final void Function(BuildContext context, V notifier, E event)? onEvent;
+
   /// Optional static child widget that is passed to the [builder].
   final Widget? child;
 
   @override
-  State<ExtValueBuilder<V, S>> createState() => _ExtValueBuilderState<V, S>();
+  State<ExtValueBuilder<V, S, E>> createState() =>
+      _ExtValueBuilderState<V, S, E>();
 }
 
-class _ExtValueBuilderState<V extends ExtValueNotifier<S>, S>
-    extends State<ExtValueBuilder<V, S>> {
+class _ExtValueBuilderState<V extends ExtValueNotifier<S, E>, S, E>
+    extends State<ExtValueBuilder<V, S, E>> {
   late final V _notifier;
   late S _previousState;
+  StreamSubscription<E>? _eventSubscription;
 
   @override
   void initState() {
@@ -70,10 +79,16 @@ class _ExtValueBuilderState<V extends ExtValueNotifier<S>, S>
     _notifier = widget.create(context);
     _previousState = _notifier.value;
     _notifier.addListener(_handleChange);
+    _eventSubscription = _notifier.events.listen((event) {
+      if (mounted) {
+        widget.onEvent?.call(context, _notifier, event);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _eventSubscription?.cancel();
     _notifier.removeListener(_handleChange);
     _notifier.dispose();
     super.dispose();

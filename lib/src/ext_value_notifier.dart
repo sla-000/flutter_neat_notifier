@@ -1,9 +1,18 @@
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 
-/// A [ValueNotifier] that includes error and stack trace information.
-class ExtValueNotifier<T> extends ValueNotifier<T> {
+/// A [ValueNotifier] that includes error, stack trace, and event information.
+///
+/// [T] is the type of the state.
+/// [E] is the type of events that can be emitted.
+class ExtValueNotifier<T, E> extends ValueNotifier<T> {
   /// Creates an [ExtValueNotifier] with an initial value.
   ExtValueNotifier(super.value);
+
+  final _eventController = StreamController<E>.broadcast();
+
+  /// A stream of events emitted by this notifier.
+  Stream<E> get events => _eventController.stream;
 
   Object? _error;
   StackTrace? _stackTrace;
@@ -17,6 +26,11 @@ class ExtValueNotifier<T> extends ValueNotifier<T> {
 
   /// Whether the notifier is currently in a loading state.
   bool get isLoading => _isLoading;
+
+  /// Emits a one-time [event] to all listeners.
+  void emitEvent(E event) {
+    _eventController.add(event);
+  }
 
   /// Sets the loading state.
   ///
@@ -61,5 +75,11 @@ class ExtValueNotifier<T> extends ValueNotifier<T> {
     _error = null;
     _stackTrace = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _eventController.close();
+    super.dispose();
   }
 }

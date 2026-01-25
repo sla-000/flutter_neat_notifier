@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ext_notifier/ext_notifier.dart';
 
-class TestNotifier extends ExtValueNotifier<int> {
+class TestNotifier extends ExtValueNotifier<int, dynamic> {
   TestNotifier() : super(0);
 }
 
@@ -78,6 +78,20 @@ THEN: it updates isLoading and notifies listeners''',
       },
     );
 
+    test(
+      '''GIVEN: An ExtValueNotifier with Events
+WHEN: emitEvent is called
+THEN: the event is added to the events stream''',
+      () async {
+        final notifier = ExtValueNotifier<int, String>(0);
+        const eventMessage = 'Test Event';
+
+        final expectation = expectLater(notifier.events, emits(eventMessage));
+        notifier.emitEvent(eventMessage);
+        await expectation;
+      },
+    );
+
     group('runTask', () {
       test(
         '''GIVEN: An ExtValueNotifier
@@ -95,12 +109,6 @@ THEN: it manages loading state and updates value''',
 
           expect(notifier.value, 1);
           expect(notifier.isLoading, isFalse);
-          // 1. setLoading(true)
-          // 2. clearError() - no change, but runTask calls it.
-          //    Wait, clearError calls notifyListeners even if no error was present?
-          //    Let's check logic: clearError calls notifyListeners.
-          // 3. value = 1
-          // 4. setLoading(false)
           expect(loadingStates.contains(true), isTrue);
           expect(loadingStates.last, isFalse);
         },

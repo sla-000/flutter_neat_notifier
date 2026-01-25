@@ -11,12 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ExtNotifier Example',
+      title: 'ExtValueBuilder Example',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'ExtNotifier Demo'),
+      home: const MyHomePage(title: 'ExtValueBuilder Demo'),
     );
   }
 }
@@ -24,8 +24,17 @@ class MyApp extends StatelessWidget {
 // 1. Define your State (using a Record for simplicity and immutability)
 typedef CounterState = ({int counter1, int counter2, int counter3});
 
-// 2. Define your Notifier (extending ExtValueNotifier)
-class CounterValueNotifier extends ExtValueNotifier<CounterState> {
+// 2. Define your Events (using a sealed class for type-safe handling)
+sealed class CounterEvent {}
+
+class CounterMilestoneEvent extends CounterEvent {
+  CounterMilestoneEvent(this.message);
+  final String message;
+}
+
+// 3. Define your Notifier (extending ExtValueNotifier with CounterEvent)
+class CounterValueNotifier
+    extends ExtValueNotifier<CounterState, CounterEvent> {
   CounterValueNotifier() : super((counter1: 0, counter2: 0, counter3: 0));
 
   Future<void> increment1() => runTask(() async {
@@ -58,6 +67,13 @@ class CounterValueNotifier extends ExtValueNotifier<CounterState> {
       counter2: value.counter2,
       counter3: value.counter3 + 1,
     );
+
+    // Emit event on milestone (every 5 increments)
+    if (value.counter3 % 5 == 0) {
+      emitEvent(
+        CounterMilestoneEvent('Milestone reached: ${value.counter3} items!'),
+      );
+    }
   }
 }
 
@@ -68,8 +84,8 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 3. Use ExtValueBuilder with the new ValueNotifier and State
-    return ExtValueBuilder<CounterValueNotifier, CounterState>(
+    // 4. Use ExtValueBuilder with the new ValueNotifier, State and Event type
+    return ExtValueBuilder<CounterValueNotifier, CounterState, CounterEvent>(
       create: (context) => CounterValueNotifier(),
       // 4. Optimization: Rebuild when EITHER counter1 OR counter2 change
       rebuildWhen: (prev, curr) =>
@@ -81,6 +97,15 @@ class MyHomePage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(title: const Text('Loading...')),
           body: const Center(child: CircularProgressIndicator()),
+        );
+      },
+      onEvent: (context, notifier, event) {
+        final message = switch (event) {
+          CounterMilestoneEvent(message: final m) => m,
+        };
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: Colors.deepPurple),
         );
       },
       builder: (context, notifier, child) {
