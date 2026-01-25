@@ -30,16 +30,8 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 4. Use ExtValueBuilder with the new ValueNotifier, State and Event type
     return ExtValueBuilder<CounterValueNotifier, CounterState, CounterEvent>(
       create: (context) => CounterValueNotifier(),
-      // 4. Optimization: Rebuild when EITHER counter1 OR counter2 change
-      rebuildWhen: (prev, curr) =>
-          prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
-      errorBuilder: (context, error, stackTrace, notifier) {
-        return AppErrorWidget(error: error, onRetry: notifier.increment1);
-      },
-      loadingBuilder: (context, notifier) => const AppLoadingWidget(),
       onEvent: (context, notifier, event) {
         final message = switch (event) {
           CounterMilestoneEvent(message: final m) => m,
@@ -49,11 +41,15 @@ class MyHomePage extends StatelessWidget {
           SnackBar(content: Text(message), backgroundColor: Colors.deepPurple),
         );
       },
+      rebuildWhen: (prev, curr) =>
+          prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
+      errorBuilder: (context, error, stackTrace, notifier) =>
+          AppErrorWidget(error: error, onRetry: notifier.increment1),
+      loadingBuilder: (context, notifier) => const AppLoadingWidget(),
       builder: (context, notifier, child) {
         final state = notifier.value;
         // This print helps demonstrate when the widget rebuilds
-        // ignore: avoid_print
-        print(
+        debugPrint(
           'Building MyHomePage: counter1=${state.counter1}, counter2=${state.counter2}, counter3=${state.counter3}',
         );
 
@@ -130,7 +126,7 @@ class MyHomePage extends StatelessWidget {
           ),
         );
       },
-      child: const UnchangedWidget(),
+      child: const HeavyWidgetThatWeDoNotWantToRebuild(),
     );
   }
 }
@@ -185,13 +181,12 @@ class AppLoadingWidget extends StatelessWidget {
   }
 }
 
-class UnchangedWidget extends StatelessWidget {
-  const UnchangedWidget({super.key});
+class HeavyWidgetThatWeDoNotWantToRebuild extends StatelessWidget {
+  const HeavyWidgetThatWeDoNotWantToRebuild({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ignore: avoid_print
-    print('Building UnchangedWidget');
+    debugPrint('Building HeavyWidgetThatWeDoNotWantToRebuild');
     return const Text('Widget not affected by the Notifier');
   }
 }
