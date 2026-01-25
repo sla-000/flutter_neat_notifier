@@ -37,8 +37,7 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// This will trigger a notification to listeners.
   @protected
   void setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
+    _updateInternalState(isLoading: value);
   }
 
   /// Runs an asynchronous [task] while automatically managing
@@ -48,15 +47,16 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   Future<void> runTask(Future<void> Function() task) async {
     if (_isLoading) return;
 
-    setLoading(true);
-    clearError();
+    _updateInternalState(isLoading: true, error: null, stackTrace: null);
 
     try {
       await task();
     } catch (e, s) {
-      setError(e, s);
+      _updateInternalState(isLoading: false, error: e, stackTrace: s);
     } finally {
-      setLoading(false);
+      if (_isLoading) {
+        _updateInternalState(isLoading: false);
+      }
     }
   }
 
@@ -65,9 +65,7 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// This will trigger a notification to listeners.
   @protected
   void setError(Object? error, [StackTrace? stackTrace]) {
-    _error = error;
-    _stackTrace = stackTrace;
-    notifyListeners();
+    _updateInternalState(error: error, stackTrace: stackTrace);
   }
 
   /// Clears the current error and stack trace.
@@ -75,9 +73,32 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// This will trigger a notification to listeners.
   @protected
   void clearError() {
-    _error = null;
-    _stackTrace = null;
-    notifyListeners();
+    _updateInternalState(error: null, stackTrace: null);
+  }
+
+  /// Internal helper to update state attributes atomically and notify once.
+  void _updateInternalState({
+    bool? isLoading,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    bool changed = false;
+    if (isLoading != null && _isLoading != isLoading) {
+      _isLoading = isLoading;
+      changed = true;
+    }
+    if (_error != error) {
+      _error = error;
+      changed = true;
+    }
+    if (_stackTrace != stackTrace) {
+      _stackTrace = stackTrace;
+      changed = true;
+    }
+
+    if (changed) {
+      notifyListeners();
+    }
   }
 
   @override
