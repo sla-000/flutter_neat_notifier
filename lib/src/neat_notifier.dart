@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 ///
 /// [T] is the type of the state.
 /// [E] is the type of events that can be emitted.
-class ExtValueNotifier<T, E> extends ValueNotifier<T> {
-  /// Creates an [ExtValueNotifier] with an initial value.
-  ExtValueNotifier(super.value);
+class NeatNotifier<T, E> extends ValueNotifier<T> {
+  /// Creates a [NeatNotifier] with an initial value.
+  NeatNotifier(super.value);
 
   final _eventController = StreamController<E>.broadcast();
 

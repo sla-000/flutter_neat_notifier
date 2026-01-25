@@ -1,14 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ext_notifier/ext_notifier.dart';
+import 'package:neat_notifier/neat_notifier.dart';
 
-class TestNotifier extends ExtValueNotifier<int, dynamic> {
+class TestNotifier extends NeatNotifier<int, dynamic> {
   TestNotifier() : super(0);
 }
 
 void main() {
-  group('ExtValueNotifier', () {
+  group('NeatNotifier', () {
     test(
-      '''GIVEN: A new ExtValueNotifier
+      '''GIVEN: A new NeatNotifier
 WHEN: it is initialized
 THEN: it has default values for value, error, and isLoading''',
       () {
@@ -22,7 +22,7 @@ THEN: it has default values for value, error, and isLoading''',
     );
 
     test(
-      '''GIVEN: An ExtValueNotifier
+      '''GIVEN: A NeatNotifier
 WHEN: setError is called
 THEN: it updates error and stackTrace and notifies listeners''',
       () {
@@ -41,7 +41,7 @@ THEN: it updates error and stackTrace and notifies listeners''',
     );
 
     test(
-      '''GIVEN: An ExtValueNotifier with an error
+      '''GIVEN: A NeatNotifier with an error
 WHEN: clearError is called
 THEN: it resets error and stackTrace and notifies listeners''',
       () {
@@ -60,7 +60,7 @@ THEN: it resets error and stackTrace and notifies listeners''',
     );
 
     test(
-      '''GIVEN: An ExtValueNotifier
+      '''GIVEN: A NeatNotifier
 WHEN: setLoading is called
 THEN: it updates isLoading and notifies listeners''',
       () {
@@ -79,11 +79,11 @@ THEN: it updates isLoading and notifies listeners''',
     );
 
     test(
-      '''GIVEN: An ExtValueNotifier with Events
+      '''GIVEN: A NeatNotifier with Events
 WHEN: emitEvent is called
 THEN: the event is added to the events stream''',
       () async {
-        final notifier = ExtValueNotifier<int, String>(0);
+        final notifier = NeatNotifier<int, String>(0);
         const eventMessage = 'Test Event';
 
         final expectation = expectLater(notifier.events, emits(eventMessage));
@@ -94,7 +94,7 @@ THEN: the event is added to the events stream''',
 
     group('runTask', () {
       test(
-        '''GIVEN: An ExtValueNotifier
+        '''GIVEN: A NeatNotifier
 WHEN: runTask completes successfully
 THEN: it manages loading state and updates value''',
         () async {
@@ -115,7 +115,7 @@ THEN: it manages loading state and updates value''',
       );
 
       test(
-        '''GIVEN: An ExtValueNotifier
+        '''GIVEN: A NeatNotifier
 WHEN: runTask throws an error
 THEN: it catches the error and moves to error state''',
         () async {
@@ -132,7 +132,7 @@ THEN: it catches the error and moves to error state''',
       );
 
       test(
-        '''GIVEN: An ExtValueNotifier already loading
+        '''GIVEN: A NeatNotifier already loading
 WHEN: runTask is called again
 THEN: the second task is ignored''',
         () async {

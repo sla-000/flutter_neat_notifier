@@ -1,4 +1,4 @@
-import 'package:ext_notifier/ext_notifier.dart';
+import 'package:neat_notifier/neat_notifier.dart';
 
 // 1. Define your State (using a Record for simplicity and immutability)
 typedef CounterState = ({int counter1, int counter2, int counter3});
@@ -11,9 +11,8 @@ class CounterMilestoneEvent extends CounterEvent {
   final String message;
 }
 
-// 3. Define your Notifier (extending ExtValueNotifier with CounterEvent)
-class CounterValueNotifier
-    extends ExtValueNotifier<CounterState, CounterEvent> {
+// 3. Define your Notifier (extending NeatNotifier with CounterEvent)
+class CounterValueNotifier extends NeatNotifier<CounterState, CounterEvent> {
   CounterValueNotifier() : super((counter1: 0, counter2: 0, counter3: 0));
 
   Future<void> increment1() => runTask(() async {

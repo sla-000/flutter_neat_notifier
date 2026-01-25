@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 
-import 'ext_value_notifier.dart';
+import 'neat_notifier.dart';
 
-/// A widget that manages the lifecycle of an [ExtValueNotifier] and rebuilds
+/// A widget that manages the lifecycle of a [NeatNotifier] and rebuilds
 /// its children when the notifier updates based on custom logic.
 ///
-/// [ExtValueBuilder] handles the creation and disposal of the [notifier] automatically.
-class ExtValueBuilder<V extends ExtValueNotifier<S, E>, S, E>
-    extends StatefulWidget {
-  /// Creates an [ExtValueBuilder].
+/// [NeatBuilder] handles the creation and disposal of the [notifier] automatically.
+class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
+  /// Creates a [NeatBuilder].
   ///
-  /// The [create] callback is used to instantiate the [ExtValueNotifier].
+  /// The [create] callback is used to instantiate the [NeatNotifier].
   /// The [builder] callback is used to build the widget tree. It receives
   /// the [notifier] itself.
   /// The [child] is optional and can be used for optimization.
@@ -19,7 +18,7 @@ class ExtValueBuilder<V extends ExtValueNotifier<S, E>, S, E>
   /// by comparing the previous and current state.
   /// The [errorBuilder] is called when the notifier has an active error.
   /// The [onEvent] callback is called when the notifier emits a one-time event.
-  const ExtValueBuilder({
+  const NeatBuilder({
     super.key,
     required this.create,
     required this.builder,
@@ -30,7 +29,7 @@ class ExtValueBuilder<V extends ExtValueNotifier<S, E>, S, E>
     this.onEvent,
   });
 
-  /// Function to create the [ExtValueNotifier] instance.
+  /// Function to create the [NeatNotifier] instance.
   final V Function(BuildContext context) create;
 
   /// Function that returns the widget tree.
@@ -65,12 +64,11 @@ class ExtValueBuilder<V extends ExtValueNotifier<S, E>, S, E>
   final Widget? child;
 
   @override
-  State<ExtValueBuilder<V, S, E>> createState() =>
-      _ExtValueBuilderState<V, S, E>();
+  State<NeatBuilder<V, S, E>> createState() => _NeatBuilderState<V, S, E>();
 }
 
-class _ExtValueBuilderState<V extends ExtValueNotifier<S, E>, S, E>
-    extends State<ExtValueBuilder<V, S, E>> {
+class _NeatBuilderState<V extends NeatNotifier<S, E>, S, E>
+    extends State<NeatBuilder<V, S, E>> {
   late final V _notifier;
   late S _previousState;
   StreamSubscription<E>? _eventSubscription;

@@ -1,4 +1,4 @@
-import 'package:ext_notifier/ext_notifier.dart';
+import 'package:neat_notifier/neat_notifier.dart';
 import 'package:flutter/material.dart';
 
 import 'counter_notifier.dart';
@@ -13,12 +13,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ExtValueBuilder Example',
+      title: 'NeatNotifier Example',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'ExtValueBuilder Demo'),
+      home: const MyHomePage(title: 'NeatNotifier Demo'),
     );
   }
 }
@@ -30,7 +30,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExtValueBuilder<CounterValueNotifier, CounterState, CounterEvent>(
+    return NeatBuilder<CounterValueNotifier, CounterState, CounterEvent>(
       create: (context) => CounterValueNotifier(),
       onEvent: (context, notifier, event) {
         final message = switch (event) {
