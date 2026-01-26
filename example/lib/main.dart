@@ -2,23 +2,34 @@ import 'package:neat_notifier/neat_notifier.dart';
 import 'package:flutter/material.dart';
 
 import 'counter_notifier.dart';
+import 'settings_notifier.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NeatNotifier Example',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'NeatNotifier Demo'),
+    // 1. Acts as a Provider for the whole app
+    return NeatBuilder<SettingsNotifier, SettingsState, SettingsEvent>(
+      create: (context) => SettingsNotifier(),
+      builder: (context, notifier, child) {
+        final state = notifier.value;
+        return MaterialApp(
+          title: 'NeatNotifier Example',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple,
+              brightness: state.isDarkMode ? Brightness.dark : Brightness.light,
+            ),
+            useMaterial3: true,
+          ),
+          home: const MyHomePage(title: 'NeatNotifier DI Demo'),
+        );
+      },
     );
   }
 }
@@ -30,95 +41,42 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 2. Acts as a Provider for this screen
     return NeatBuilder<CounterNotifier, CounterState, CounterEvent>(
       create: (context) => CounterNotifier(),
       onEvent: (context, notifier, event) => _showSnackbar(event, context),
-      rebuildWhen: (prev, curr) =>
-          prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
-      errorBuilder: (context, error, stackTrace, notifier, child) =>
-          AppErrorWidget(error: error, onRetry: notifier.increment1),
-      loadingBuilder: (context, notifier, child) => const AppLoadingWidget(),
-      builder: (context, notifier, child) {
-        final state = notifier.value;
-        // This print helps demonstrate when the widget rebuilds
-        debugPrint(
-          'Building MyHomePage: counter1=${state.counter1}, counter2=${state.counter2}, counter3=${state.counter3}',
-        );
-
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: Text(title),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Counter 1 (Async + Error prone):'),
-                Text(
-                  '${state.counter1}',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 20),
-                const Text('Counter 2:'),
-                Text(
-                  '${state.counter2}',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 10),
-                const Text('Counter 3:'),
-                Text(
-                  '${state.counter3}',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Optimization Rule:\nRebuilds if EITHER Counter 1 OR Counter 2 change.\n(Counter 3 changes are ignored)',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(title),
+          actions: [
+            // 3. Simple Consumer using context.watch
+            Builder(
+              builder: (context) {
+                final settings = context.watch<SettingsNotifier>();
+                return IconButton(
+                  icon: Icon(
+                    settings.value.isDarkMode
+                        ? Icons.light_mode
+                        : Icons.dark_mode,
                   ),
-                ),
-                if (child case final child?) ...[
-                  const SizedBox(height: 32),
-                  child,
-                ],
-              ],
+                  onPressed: settings.toggleDarkMode,
+                );
+              },
             ),
-          ),
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+          ],
+        ),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FloatingActionButton(
-                heroTag: 'btn1',
-                onPressed: notifier.isLoading ? null : notifier.increment1,
-                tooltip: 'Increment Counter 1 (Async)',
-                child: const Text('1'),
-              ),
-              const SizedBox(height: 10),
-              FloatingActionButton(
-                heroTag: 'btn2',
-                onPressed: notifier.increment2,
-                tooltip: 'Increment Counter 2',
-                backgroundColor: Colors.grey,
-                child: const Text('2'),
-              ),
-              const SizedBox(height: 10),
-              FloatingActionButton(
-                heroTag: 'btn3',
-                onPressed: notifier.increment3,
-                tooltip: 'Increment Counter 3',
-                backgroundColor: Colors.blueGrey,
-                child: const Text('3'),
-              ),
+              CounterDisplay(),
+              SizedBox(height: 32),
+              CounterActions(),
             ],
           ),
-        );
-      },
-      child: const HeavyWidgetThatWeDoNotWantToRebuild(),
+        ),
+      ),
     );
   }
 
@@ -133,62 +91,83 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class AppErrorWidget extends StatelessWidget {
-  const AppErrorWidget({super.key, required this.error, required this.onRetry});
-
-  final Object error;
-  final VoidCallback onRetry;
+/// A deep child that consumes the CounterNotifier via DI
+class CounterDisplay extends StatelessWidget {
+  const CounterDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Error')),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 60, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(
-                'Something went wrong:',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(error.toString(), textAlign: TextAlign.center),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
-                label: const Text('Try Again'),
-              ),
-            ],
-          ),
+    // 4. Acts as a Consumer (no 'create' needed)
+    return NeatBuilder<CounterNotifier, CounterState, CounterEvent>(
+      rebuildWhen: (prev, curr) =>
+          prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
+      errorBuilder: (context, error, stackTrace, notifier, child) =>
+          Text('Error: $error', style: const TextStyle(color: Colors.red)),
+      loadingBuilder: (context, notifier, child) =>
+          const CircularProgressIndicator(),
+      builder: (context, notifier, child) {
+        final state = notifier.value;
+        return Column(
+          children: [
+            const Text('Counter 1 (Async + Error prone):'),
+            Text(
+              '${state.counter1}',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 20),
+            const Text('Counter 2:'),
+            Text(
+              '${state.counter2}',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 10),
+            const Text('Counter 3:'),
+            Text(
+              '${state.counter3}',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class CounterActions extends StatelessWidget {
+  const CounterActions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 5. Using context.read for actions (no rebuild needed)
+    final notifier = context.read<CounterNotifier>();
+    final isLoading = context.watch<CounterNotifier>().isLoading;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        FloatingActionButton(
+          heroTag: 'btn1',
+          onPressed: isLoading ? null : notifier.increment1,
+          tooltip: 'Increment Counter 1 (Async)',
+          child: const Text('1'),
         ),
-      ),
+        const SizedBox(width: 10),
+        FloatingActionButton(
+          heroTag: 'btn2',
+          onPressed: notifier.increment2,
+          tooltip: 'Increment Counter 2',
+          backgroundColor: Colors.grey,
+          child: const Text('2'),
+        ),
+        const SizedBox(width: 10),
+        FloatingActionButton(
+          heroTag: 'btn3',
+          onPressed: notifier.increment3,
+          tooltip: 'Increment Counter 3',
+          backgroundColor: Colors.blueGrey,
+          child: const Text('3'),
+        ),
+      ],
     );
-  }
-}
-
-class AppLoadingWidget extends StatelessWidget {
-  const AppLoadingWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Loading...')),
-      body: const Center(child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class HeavyWidgetThatWeDoNotWantToRebuild extends StatelessWidget {
-  const HeavyWidgetThatWeDoNotWantToRebuild({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    debugPrint('Building HeavyWidgetThatWeDoNotWantToRebuild');
-    return const Text('Widget not affected by the Notifier');
   }
 }

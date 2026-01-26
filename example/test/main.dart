@@ -4,7 +4,7 @@ import 'package:example/main.dart';
 
 void main() {
   testWidgets('MyHomePage initial state test', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const App());
 
     // Verify initial values
     expect(find.text('0'), findsNWidgets(3)); // Counter 1, 2, and 3
@@ -12,13 +12,13 @@ void main() {
     expect(find.text('1'), findsOneWidget); // Button 1
     expect(find.text('2'), findsOneWidget); // Button 2
     expect(find.text('3'), findsOneWidget); // Button 3
-    expect(find.text('NeatNotifier Demo'), findsOneWidget);
+    expect(find.text('NeatNotifier DI Demo'), findsOneWidget);
   });
 
   testWidgets('Increment Counter 2 button interaction', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const App());
 
     // Find button 2 and tap it
     final btn2 = find.widgetWithText(FloatingActionButton, '2');
@@ -35,7 +35,7 @@ void main() {
   testWidgets('Increment Counter 3 button interaction (Optimization Test)', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const App());
 
     // Find button 3 and tap it
     final btn3 = find.widgetWithText(FloatingActionButton, '3');
@@ -49,7 +49,7 @@ void main() {
   });
 
   testWidgets('Milestone event shows SnackBar', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const App());
 
     final btn3 = find.widgetWithText(FloatingActionButton, '3');
 

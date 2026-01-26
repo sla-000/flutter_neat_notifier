@@ -6,22 +6,27 @@ import 'neat_notifier.dart';
 /// A widget that manages the lifecycle of a [NeatNotifier] and rebuilds
 /// its children when the notifier updates based on custom logic.
 ///
-/// [NeatBuilder] handles the creation and disposal of the [notifier] automatically.
+/// [NeatBuilder] can act as both a **Provider** and a **Builder**:
+/// - If [create] is provided, it instantiates and manages the [notifier].
+/// - If [create] is omitted, it looks up the nearest [NeatNotifier] of type [V]
+///   in the widget tree.
 class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   /// Creates a [NeatBuilder].
   ///
-  /// The [create] callback is used to instantiate the [NeatNotifier].
-  /// The [builder] callback is used to build the widget tree. It receives
-  /// the [notifier] itself.
+  /// The [create] callback is used to instantiate the [NeatNotifier]. If null,
+  /// the widget will attempt to find an existing [V] in the widget tree.
+  ///
+  /// The [builder] callback is used to build the widget tree. If null, it
+  /// defaults to returning the [child].
+  ///
   /// The [child] is optional and can be used for optimization.
-  /// The [rebuildWhen] callback allows for fine-grained control over rebuilds
-  /// by comparing the previous and current state.
+  /// The [rebuildWhen] callback allows for fine-grained control over rebuilds.
   /// The [errorBuilder] is called when the notifier has an active error.
   /// The [onEvent] callback is called when the notifier emits a one-time event.
   const NeatBuilder({
     super.key,
-    required this.create,
-    required this.builder,
+    this.create,
+    this.builder,
     this.child,
     this.rebuildWhen,
     this.errorBuilder,
@@ -30,12 +35,10 @@ class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   });
 
   /// Function to create the [NeatNotifier] instance.
-  final V Function(BuildContext context) create;
+  final V Function(BuildContext context)? create;
 
   /// Function that returns the widget tree.
-  ///
-  /// It is called whenever [rebuildWhen] returns true (or always if not provided).
-  final Widget Function(BuildContext context, V notifier, Widget? child)
+  final Widget Function(BuildContext context, V notifier, Widget? child)?
   builder;
 
   /// Optional builder that is called when the notifier has an active error.
@@ -53,8 +56,6 @@ class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   loadingBuilder;
 
   /// Optional callback to control when the widget rebuilds.
-  ///
-  /// Comparing [prev] and [curr] allows for optimized rebuilds.
   final bool Function(S prev, S curr)? rebuildWhen;
 
   /// Optional callback called when a one-time event is emitted.
@@ -63,25 +64,64 @@ class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   /// Optional static child widget that is passed to the builders.
   final Widget? child;
 
+  /// Finds the nearest [NeatNotifier] of type [V] in the widget tree.
+  ///
+  /// If [listen] is true (default), the widget will rebuild when the notifier updates.
+  static V of<V extends NeatNotifier<dynamic, dynamic>>(
+    BuildContext context, {
+    bool listen = true,
+  }) {
+    final provider = listen
+        ? context
+              .dependOnInheritedWidgetOfExactType<_NeatInheritedProvider<V>>()
+        : context.getInheritedWidgetOfExactType<_NeatInheritedProvider<V>>();
+
+    if (provider == null) {
+      throw FlutterError(
+        'NeatBuilder.of() called with a context that does not contain a $V.\n'
+        'No ancestor could be found with that type. Make sure you have a parent NeatBuilder that creates this notifier.',
+      );
+    }
+    return provider.notifier;
+  }
+
   @override
   State<NeatBuilder<V, S, E>> createState() => _NeatBuilderState<V, S, E>();
 }
 
 class _NeatBuilderState<V extends NeatNotifier<S, E>, S, E>
     extends State<NeatBuilder<V, S, E>> {
-  late final V _notifier;
+  V? _notifier;
   late S _previousState;
   StreamSubscription<E>? _eventSubscription;
+  bool _isOwner = false;
+
+  V get _effectiveNotifier => _notifier!;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.create == null && _notifier == null) {
+      _initNotifier(NeatBuilder.of<V>(context, listen: false));
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _notifier = widget.create(context);
-    _previousState = _notifier.value;
-    _notifier.addListener(_handleChange);
-    _eventSubscription = _notifier.events.listen((event) {
+    if (widget.create != null) {
+      _isOwner = true;
+      _initNotifier(widget.create!(context));
+    }
+  }
+
+  void _initNotifier(V notifier) {
+    _notifier = notifier;
+    _previousState = _effectiveNotifier.value;
+    _effectiveNotifier.addListener(_handleChange);
+    _eventSubscription = _effectiveNotifier.events.listen((event) {
       if (mounted) {
-        widget.onEvent?.call(context, _notifier, event);
+        widget.onEvent?.call(context, _effectiveNotifier, event);
       }
     });
   }
@@ -89,36 +129,77 @@ class _NeatBuilderState<V extends NeatNotifier<S, E>, S, E>
   @override
   void dispose() {
     _eventSubscription?.cancel();
-    _notifier.removeListener(_handleChange);
-    _notifier.dispose();
+    _notifier?.removeListener(_handleChange);
+    if (_isOwner) {
+      _notifier?.dispose();
+    }
     super.dispose();
   }
 
   void _handleChange() {
-    final currentState = _notifier.value;
+    final currentState = _effectiveNotifier.value;
     final shouldRebuild =
         widget.rebuildWhen?.call(_previousState, currentState) ?? true;
     _previousState = currentState;
 
-    if (shouldRebuild || _notifier.error != null || _notifier.isLoading) {
+    if (shouldRebuild ||
+        _effectiveNotifier.error != null ||
+        _effectiveNotifier.isLoading) {
       setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_notifier.error != null && widget.errorBuilder != null) {
-      return widget.errorBuilder!(
+    Widget content;
+
+    if (_effectiveNotifier.error != null && widget.errorBuilder != null) {
+      content = widget.errorBuilder!(
         context,
-        _notifier.error!,
-        _notifier.stackTrace,
-        _notifier,
+        _effectiveNotifier.error!,
+        _effectiveNotifier.stackTrace,
+        _effectiveNotifier,
         widget.child,
       );
+    } else if (_effectiveNotifier.isLoading && widget.loadingBuilder != null) {
+      content = widget.loadingBuilder!(
+        context,
+        _effectiveNotifier,
+        widget.child,
+      );
+    } else if (widget.builder != null) {
+      content = widget.builder!(context, _effectiveNotifier, widget.child);
+    } else {
+      content = widget.child ?? const SizedBox.shrink();
     }
-    if (_notifier.isLoading && widget.loadingBuilder != null) {
-      return widget.loadingBuilder!(context, _notifier, widget.child);
-    }
-    return widget.builder(context, _notifier, widget.child);
+
+    // Always wrap in a provider if we are managing/holding a notifier
+    return _NeatInheritedProvider<V>(
+      notifier: _effectiveNotifier,
+      child: content,
+    );
   }
+}
+
+/// Internal widget that enables Dependency Injection for [NeatNotifier]s.
+class _NeatInheritedProvider<V extends NeatNotifier<dynamic, dynamic>>
+    extends InheritedWidget {
+  const _NeatInheritedProvider({required this.notifier, required super.child});
+
+  final V notifier;
+
+  @override
+  bool updateShouldNotify(_NeatInheritedProvider<V> oldWidget) =>
+      notifier != oldWidget.notifier;
+}
+
+/// Extensions for easier access to [NeatNotifier]s from [BuildContext].
+extension NeatContextExtensions on BuildContext {
+  /// Retrieves the nearest [NeatNotifier] of type [V] without listening to it.
+  V read<V extends NeatNotifier<dynamic, dynamic>>() =>
+      NeatBuilder.of<V>(this, listen: false);
+
+  /// Retrieves the nearest [NeatNotifier] of type [V] and registers for rebuilds.
+  V watch<V extends NeatNotifier<dynamic, dynamic>>() =>
+      NeatBuilder.of<V>(this, listen: true);
 }
