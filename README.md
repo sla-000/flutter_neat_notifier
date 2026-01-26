@@ -10,7 +10,7 @@ A lightweight, feature-rich state management package for Flutter that builds upo
 - **Extends ValueNotifier**: Leverages the familiar and performant `ValueNotifier` API.
 - **Built-in Async Support**: Easily manage `isLoading`, `error`, and `stackTrace` with the `runTask` method.
 - **Event System**: Emit and listen to one-time events (e.g., showing a SnackBar or navigation) outside the main state.
-- **Optimized Rebuilds**: `NeatBuilder` provides fine-grained control over widget rebuilds with a `rebuildWhen` callback.
+- **Optimized Rebuilds**: `NeatState` provides fine-grained control over widget rebuilds with a `rebuildWhen` callback.
 - **Dedicated Builders**: Specific builders for `loading` and `error` states to keep your UI code clean.
 
 ## Getting started
@@ -56,10 +56,10 @@ class CounterNotifier extends NeatNotifier<CounterState, CounterEvent> {
 }
 ```
 
-### 2. Use NeatBuilder in your UI
+### 2. Use NeatState in your UI
 
 ```dart
-NeatBuilder<CounterNotifier, CounterState, CounterEvent>(
+NeatState<CounterNotifier, CounterState, CounterEvent>(
   create: (context) => CounterNotifier(),
   onEvent: (context, notifier, event) {
     if (event is MilestoneEvent) {

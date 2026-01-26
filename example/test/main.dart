@@ -12,7 +12,7 @@ void main() {
     expect(find.text('1'), findsOneWidget); // Button 1
     expect(find.text('2'), findsOneWidget); // Button 2
     expect(find.text('3'), findsOneWidget); // Button 3
-    expect(find.text('NeatNotifier DI Demo'), findsOneWidget);
+    expect(find.text('NeatState DI Demo'), findsOneWidget);
   });
 
   testWidgets('Increment Counter 2 button interaction', (

@@ -6,12 +6,12 @@ import 'neat_notifier.dart';
 /// A widget that manages the lifecycle of a [NeatNotifier] and rebuilds
 /// its children when the notifier updates based on custom logic.
 ///
-/// [NeatBuilder] can act as both a **Provider** and a **Builder**:
+/// [NeatState] can act as both a **Provider** and a **Builder**:
 /// - If [create] is provided, it instantiates and manages the [notifier].
 /// - If [create] is omitted, it looks up the nearest [NeatNotifier] of type [V]
 ///   in the widget tree.
-class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
-  /// Creates a [NeatBuilder].
+class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
+  /// Creates a [NeatState].
   ///
   /// The [create] callback is used to instantiate the [NeatNotifier]. If null,
   /// the widget will attempt to find an existing [V] in the widget tree.
@@ -23,7 +23,7 @@ class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   /// The [rebuildWhen] callback allows for fine-grained control over rebuilds.
   /// The [errorBuilder] is called when the notifier has an active error.
   /// The [onEvent] callback is called when the notifier emits a one-time event.
-  const NeatBuilder({
+  const NeatState({
     super.key,
     this.create,
     this.builder,
@@ -78,19 +78,19 @@ class NeatBuilder<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
 
     if (provider == null) {
       throw FlutterError(
-        'NeatBuilder.of() called with a context that does not contain a $V.\n'
-        'No ancestor could be found with that type. Make sure you have a parent NeatBuilder that creates this notifier.',
+        'NeatState.of() called with a context that does not contain a $V.\n'
+        'No ancestor could be found with that type. Make sure you have a parent NeatState that creates this notifier.',
       );
     }
     return provider.notifier;
   }
 
   @override
-  State<NeatBuilder<V, S, E>> createState() => _NeatBuilderState<V, S, E>();
+  State<NeatState<V, S, E>> createState() => _NeatState<V, S, E>();
 }
 
-class _NeatBuilderState<V extends NeatNotifier<S, E>, S, E>
-    extends State<NeatBuilder<V, S, E>> {
+class _NeatState<V extends NeatNotifier<S, E>, S, E>
+    extends State<NeatState<V, S, E>> {
   V? _notifier;
   late S _previousState;
   StreamSubscription<E>? _eventSubscription;
@@ -102,7 +102,7 @@ class _NeatBuilderState<V extends NeatNotifier<S, E>, S, E>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (widget.create == null && _notifier == null) {
-      _initNotifier(NeatBuilder.of<V>(context, listen: false));
+      _initNotifier(NeatState.of<V>(context, listen: false));
     }
   }
 
@@ -197,9 +197,9 @@ class _NeatInheritedProvider<V extends NeatNotifier<dynamic, dynamic>>
 extension NeatContextExtensions on BuildContext {
   /// Retrieves the nearest [NeatNotifier] of type [V] without listening to it.
   V read<V extends NeatNotifier<dynamic, dynamic>>() =>
-      NeatBuilder.of<V>(this, listen: false);
+      NeatState.of<V>(this, listen: false);
 
   /// Retrieves the nearest [NeatNotifier] of type [V] and registers for rebuilds.
   V watch<V extends NeatNotifier<dynamic, dynamic>>() =>
-      NeatBuilder.of<V>(this, listen: true);
+      NeatState.of<V>(this, listen: true);
 }

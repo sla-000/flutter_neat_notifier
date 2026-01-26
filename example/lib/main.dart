@@ -14,7 +14,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1. Acts as a Provider for the whole app
-    return NeatBuilder<SettingsNotifier, SettingsState, SettingsEvent>(
+    return NeatState<SettingsNotifier, SettingsState, SettingsEvent>(
       create: (context) => SettingsNotifier(),
       builder: (context, notifier, child) {
         final state = notifier.value;
@@ -42,7 +42,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 2. Acts as a Provider for this screen
-    return NeatBuilder<CounterNotifier, CounterState, CounterEvent>(
+    return NeatState<CounterNotifier, CounterState, CounterEvent>(
       create: (context) => CounterNotifier(),
       onEvent: (context, notifier, event) => _showSnackbar(event, context),
       child: Scaffold(
@@ -98,7 +98,7 @@ class CounterDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 4. Acts as a Consumer (no 'create' needed)
-    return NeatBuilder<CounterNotifier, CounterState, CounterEvent>(
+    return NeatState<CounterNotifier, CounterState, CounterEvent>(
       rebuildWhen: (prev, curr) =>
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
       errorBuilder: (context, error, stackTrace, notifier, child) =>

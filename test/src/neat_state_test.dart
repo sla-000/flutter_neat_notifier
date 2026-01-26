@@ -30,7 +30,7 @@ class TestValueNotifier extends NeatNotifier<int, dynamic> {
 
 void main() {
   testWidgets(
-    '''GIVEN: NeatBuilder is initialized
+    '''GIVEN: NeatState is initialized
 WHEN: it builds for the first time
 THEN: the notifier is created and initial UI is shown''',
     (WidgetTester tester) async {
@@ -39,7 +39,7 @@ THEN: the notifier is created and initial UI is shown''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) {
               capturedNotifier = TestValueNotifier();
               return capturedNotifier!;
@@ -57,7 +57,7 @@ THEN: the notifier is created and initial UI is shown''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder is active
+    '''GIVEN: NeatState is active
 WHEN: the notifier updates its state
 THEN: the widget rebuilds with new state''',
     (WidgetTester tester) async {
@@ -66,7 +66,7 @@ THEN: the widget rebuilds with new state''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (context, n, child) {
               return Text('Count: ${n.value}');
@@ -83,7 +83,7 @@ THEN: the widget rebuilds with new state''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder is in the tree
+    '''GIVEN: NeatState is in the tree
 WHEN: the widget is removed
 THEN: the notifier is disposed''',
     (WidgetTester tester) async {
@@ -92,7 +92,7 @@ THEN: the notifier is disposed''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) {
               capturedNotifier = TestValueNotifier();
               return capturedNotifier!;
@@ -113,7 +113,7 @@ THEN: the notifier is disposed''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder with rebuildWhen optimization
+    '''GIVEN: NeatState with rebuildWhen optimization
 WHEN: a watched value changes
 THEN: the widget rebuilds''',
     (WidgetTester tester) async {
@@ -123,7 +123,7 @@ THEN: the widget rebuilds''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             rebuildWhen: (prev, curr) => curr > prev,
             builder: (context, n, child) {
@@ -145,7 +145,7 @@ THEN: the widget rebuilds''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder with rebuildWhen optimization
+    '''GIVEN: NeatState with rebuildWhen optimization
 WHEN: an ignored value changes
 THEN: the widget does NOT rebuild''',
     (WidgetTester tester) async {
@@ -155,7 +155,7 @@ THEN: the widget does NOT rebuild''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             rebuildWhen: (prev, curr) => false, // Never rebuild
             builder: (context, n, child) {
@@ -176,7 +176,7 @@ THEN: the widget does NOT rebuild''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder with errorBuilder
+    '''GIVEN: NeatState with errorBuilder
 WHEN: the notifier has an error
 THEN: the errorBuilder is shown''',
     (WidgetTester tester) async {
@@ -185,7 +185,7 @@ THEN: the errorBuilder is shown''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Normal Content'),
             errorBuilder: (context, error, stackTrace, n, child) {
@@ -205,7 +205,7 @@ THEN: the errorBuilder is shown''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder in error state
+    '''GIVEN: NeatState in error state
 WHEN: the error is cleared
 THEN: the normal builder is restored''',
     (WidgetTester tester) async {
@@ -215,7 +215,7 @@ THEN: the normal builder is restored''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Normal Content'),
             errorBuilder: (context, error, stackTrace, n, child) {
@@ -235,7 +235,7 @@ THEN: the normal builder is restored''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder with loadingBuilder
+    '''GIVEN: NeatState with loadingBuilder
 WHEN: the notifier is loading
 THEN: the loadingBuilder is shown''',
     (WidgetTester tester) async {
@@ -244,7 +244,7 @@ THEN: the loadingBuilder is shown''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Normal Content'),
             loadingBuilder: (context, n, child) {
@@ -278,7 +278,7 @@ THEN: it automatically manages loading and error states''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, n, _) =>
                 Text('Loading: ${n.isLoading}, Error: ${n.error != null}'),
@@ -322,7 +322,7 @@ THEN: it automatically manages loading and error states''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder with onEvent
+    '''GIVEN: NeatState with onEvent
 WHEN: an event is emitted
 THEN: the onEvent callback is triggered''',
     (WidgetTester tester) async {
@@ -332,7 +332,7 @@ THEN: the onEvent callback is triggered''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Content'),
             onEvent: (context, notifier, event) {
@@ -350,7 +350,7 @@ THEN: the onEvent callback is triggered''',
   );
 
   testWidgets(
-    '''GIVEN: NeatBuilder with a shared child
+    '''GIVEN: NeatState with a shared child
 WHEN: switching between loading, error, and normal states
 THEN: the child is preserved and passed to all builders''',
     (WidgetTester tester) async {
@@ -361,7 +361,7 @@ THEN: the child is preserved and passed to all builders''',
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: NeatBuilder<TestValueNotifier, int, dynamic>(
+          child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             child: sharedChild,
             builder: (_, _, child) =>
