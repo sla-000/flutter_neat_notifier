@@ -44,7 +44,7 @@ class MyHomePage extends StatelessWidget {
     return NeatState(
       create: (context) => CounterNotifier(),
       onAction: (context, CounterAction action) =>
-          _showSnackbar(action, context),
+          _showSnackbar(context, action),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -80,7 +80,7 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  void _showSnackbar(CounterAction action, BuildContext context) {
+  void _showSnackbar(BuildContext context, CounterAction action) {
     final message = switch (action) {
       CounterMilestoneAction(message: final m) => m,
     };
