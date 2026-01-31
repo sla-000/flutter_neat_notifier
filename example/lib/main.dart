@@ -14,9 +14,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1. Acts as a Provider for the whole app
-    return NeatState<SettingsNotifier, SettingsState, SettingsEvent>(
+    return NeatState(
       create: (context) => SettingsNotifier(),
-      builder: (context, state, child) {
+      builder: (context, SettingsState state, child) {
         return MaterialApp(
           title: 'NeatNotifier Example',
           theme: ThemeData(
@@ -41,9 +41,9 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 2. Acts as a Provider for this screen
-    return NeatState<CounterNotifier, CounterState, CounterEvent>(
+    return NeatState(
       create: (context) => CounterNotifier(),
-      onEvent: (context, event) => _showSnackbar(event, context),
+      onEvent: (context, CounterEvent event) => _showSnackbar(event, context),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
