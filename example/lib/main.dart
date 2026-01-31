@@ -100,8 +100,10 @@ class CounterDisplay extends StatelessWidget {
     return NeatState<CounterNotifier, CounterState, CounterEvent>(
       rebuildWhen: (prev, curr) =>
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
-      errorBuilder: (context, error, stackTrace, child) =>
-          Text('Error: $error', style: const TextStyle(color: Colors.red)),
+      errorBuilder: (context, error, child) => Text(
+        'Error: ${error.error}',
+        style: const TextStyle(color: Colors.red),
+      ),
       loadingBuilder: (context, loading, child) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [

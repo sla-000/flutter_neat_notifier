@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 
+typedef NeatLoading = ({bool isUploading, int progress});
+typedef NeatError = ({Object error, StackTrace? stackTrace});
+
 /// A [ValueNotifier] that includes error, stack trace, and event information.
 ///
 /// [T] is the type of the state.
 /// [E] is the type of events that can be emitted.
-typedef NeatLoading = ({bool isUploading, int progress});
-
 class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// Creates a [NeatNotifier] with an initial value.
   NeatNotifier(super.value);
