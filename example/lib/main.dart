@@ -102,8 +102,19 @@ class CounterDisplay extends StatelessWidget {
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
       errorBuilder: (context, error, stackTrace, child) =>
           Text('Error: $error', style: const TextStyle(color: Colors.red)),
-      loadingBuilder: (context, state, child) =>
-          const CircularProgressIndicator(),
+      loadingBuilder: (context, loading, child) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(loading.isUploading ? 'Uploading...' : 'Loading...'),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: 100,
+            child: LinearProgressIndicator(
+              value: loading.progress > 0 ? loading.progress / 100 : null,
+            ),
+          ),
+        ],
+      ),
       builder: (context, state, child) {
         return Column(
           children: [

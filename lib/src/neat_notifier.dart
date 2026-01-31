@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 ///
 /// [T] is the type of the state.
 /// [E] is the type of events that can be emitted.
+typedef NeatLoading = ({bool isUploading, int progress});
+
 class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// Creates a [NeatNotifier] with an initial value.
   NeatNotifier(super.value);
@@ -16,7 +18,7 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
 
   Object? _error;
   StackTrace? _stackTrace;
-  bool _isLoading = false;
+  NeatLoading? _loading;
 
   /// The current error, if any.
   Object? get error => _error;
@@ -25,7 +27,10 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   StackTrace? get stackTrace => _stackTrace;
 
   /// Whether the notifier is currently in a loading state.
-  bool get isLoading => _isLoading;
+  bool get isLoading => _loading != null;
+
+  /// The current loading state, if any.
+  NeatLoading? get loading => _loading;
 
   /// Emits a one-time [event] to all listeners.
   void emitEvent(E event) {
@@ -36,8 +41,8 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   ///
   /// This will trigger a notification to listeners.
   @protected
-  void setLoading(bool value) {
-    _updateInternalState(isLoading: value);
+  void setLoading(NeatLoading? value) {
+    _updateInternalState(loading: value);
   }
 
   /// Runs an asynchronous [task] while automatically managing
@@ -45,17 +50,21 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   ///
   /// If the notifier is already loading, the task will not be executed.
   Future<void> runTask(Future<void> Function() task) async {
-    if (_isLoading) return;
+    if (isLoading) return;
 
-    _updateInternalState(isLoading: true, error: null, stackTrace: null);
+    _updateInternalState(
+      loading: (isUploading: false, progress: 0),
+      error: null,
+      stackTrace: null,
+    );
 
     try {
       await task();
     } catch (e, s) {
-      _updateInternalState(isLoading: false, error: e, stackTrace: s);
+      _updateInternalState(loading: null, error: e, stackTrace: s);
     } finally {
-      if (_isLoading) {
-        _updateInternalState(isLoading: false);
+      if (isLoading) {
+        _updateInternalState(loading: null);
       }
     }
   }
@@ -78,13 +87,19 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
 
   /// Internal helper to update state attributes atomically and notify once.
   void _updateInternalState({
-    bool? isLoading,
+    NeatLoading? loading,
+    bool isLoading = false, // Kept for partial compatibility if needed
     Object? error,
     StackTrace? stackTrace,
   }) {
     bool changed = false;
-    if (isLoading != null && _isLoading != isLoading) {
-      _isLoading = isLoading;
+
+    // Use explicit loading record if provided, otherwise fallback to boolean toggle
+    final effectiveLoading =
+        loading ?? (isLoading ? (isUploading: false, progress: 0) : null);
+
+    if (_loading != effectiveLoading) {
+      _loading = effectiveLoading;
       changed = true;
     }
     if (_error != error) {

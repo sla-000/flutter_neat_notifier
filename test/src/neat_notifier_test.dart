@@ -5,7 +5,7 @@ class TestNotifier extends NeatNotifier<int, dynamic> {
   TestNotifier() : super(0);
 
   // Public wrappers for testing @protected methods
-  void testSetLoading(bool value) => setLoading(value);
+  void testSetLoading(NeatLoading? value) => setLoading(value);
   void testSetError(Object error, [StackTrace? stackTrace]) =>
       setError(error, stackTrace);
   void testClearError() => clearError();
@@ -74,11 +74,11 @@ THEN: it updates isLoading and notifies listeners''',
         int notifyCount = 0;
         notifier.addListener(() => notifyCount++);
 
-        notifier.testSetLoading(true);
+        notifier.testSetLoading((isUploading: false, progress: 0));
         expect(notifier.isLoading, isTrue);
         expect(notifyCount, 1);
 
-        notifier.testSetLoading(false);
+        notifier.testSetLoading(null);
         expect(notifier.isLoading, isFalse);
         expect(notifyCount, 2);
       },

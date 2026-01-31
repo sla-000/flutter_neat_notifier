@@ -22,7 +22,7 @@ class TestValueNotifier extends NeatNotifier<int, dynamic> {
   }
 
   // Public wrappers for testing @protected methods
-  void testSetLoading(bool value) => setLoading(value);
+  void testSetLoading(NeatLoading? value) => setLoading(value);
   void testSetError(Object error, [StackTrace? stackTrace]) =>
       setError(error, stackTrace);
   void testClearError() => clearError();
@@ -247,7 +247,7 @@ THEN: the loadingBuilder is shown''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Normal Content'),
-            loadingBuilder: (context, state, child) {
+            loadingBuilder: (context, loading, child) {
               return const Text('Loading UI');
             },
           ),
@@ -256,12 +256,12 @@ THEN: the loadingBuilder is shown''',
 
       expect(find.text('Normal Content'), findsOneWidget);
 
-      notifier.testSetLoading(true);
+      notifier.testSetLoading((isUploading: false, progress: 0));
       await tester.pump();
 
       expect(find.text('Loading UI'), findsOneWidget);
 
-      notifier.testSetLoading(false);
+      notifier.testSetLoading(null);
       await tester.pump();
 
       expect(find.text('Normal Content'), findsOneWidget);
@@ -379,13 +379,13 @@ THEN: the child is preserved and passed to all builders''',
       expect(find.byKey(childKey), findsOneWidget);
 
       // Loading state
-      notifier.testSetLoading(true);
+      notifier.testSetLoading((isUploading: false, progress: 0));
       await tester.pump();
       expect(find.text('Loading'), findsOneWidget);
       expect(find.byKey(childKey), findsOneWidget);
 
       // Error state
-      notifier.testSetLoading(false);
+      notifier.testSetLoading(null);
       notifier.triggerError();
       await tester.pump();
       expect(find.text('Error'), findsOneWidget);
