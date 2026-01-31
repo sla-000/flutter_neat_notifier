@@ -160,6 +160,23 @@ THEN: the second task is ignored''',
           expect(callCount, 1);
         },
       );
+
+      test(
+        '''GIVEN: A NeatNotifier
+WHEN: runTask is called with isUploading: true
+THEN: it initializes loading state with isUploading: true''',
+        () async {
+          final notifier = TestNotifier();
+          bool? wasUploading;
+
+          await notifier.runTask(() async {
+            wasUploading = notifier.loading?.isUploading;
+          }, isUploading: true);
+
+          expect(wasUploading, isTrue);
+          expect(notifier.loading, isNull);
+        },
+      );
     });
   });
 }

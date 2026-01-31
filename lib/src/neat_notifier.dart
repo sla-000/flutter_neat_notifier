@@ -50,11 +50,14 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// [isLoading], [error], and [stackTrace].
   ///
   /// If the notifier is already loading, the task will not be executed.
-  Future<void> runTask(Future<void> Function() task) async {
+  Future<void> runTask(
+    Future<void> Function() task, {
+    bool isUploading = false,
+  }) async {
     if (isLoading) return;
 
     _updateInternalState(
-      loading: (isUploading: false, progress: 0),
+      loading: (isUploading: isUploading, progress: 0),
       error: null,
       stackTrace: null,
     );
