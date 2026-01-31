@@ -17,15 +17,17 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// A stream of events emitted by this notifier.
   Stream<E> get events => _eventController.stream;
 
-  Object? _error;
-  StackTrace? _stackTrace;
+  NeatError? _error;
   NeatLoading? _loading;
 
   /// The current error, if any.
-  Object? get error => _error;
+  Object? get error => _error?.error;
 
   /// The stack trace associated with the [error], if any.
-  StackTrace? get stackTrace => _stackTrace;
+  StackTrace? get stackTrace => _error?.stackTrace;
+
+  /// The current error record, if any.
+  NeatError? get errorInfo => _error;
 
   /// Whether the notifier is currently in a loading state.
   bool get isLoading => _loading != null;
@@ -59,7 +61,6 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
     _updateInternalState(
       loading: (isUploading: isUploading, progress: 0),
       error: null,
-      stackTrace: null,
     );
 
     try {
@@ -68,10 +69,9 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
       _updateInternalState(
         loading: (isUploading: isUploading, progress: 100),
         error: null,
-        stackTrace: null,
       );
     } catch (e, s) {
-      _updateInternalState(loading: null, error: e, stackTrace: s);
+      _updateInternalState(loading: null, error: (error: e, stackTrace: s));
     } finally {
       if (isLoading) {
         _updateInternalState(loading: null);
@@ -84,7 +84,9 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// This will trigger a notification to listeners.
   @protected
   void setError(Object? error, [StackTrace? stackTrace]) {
-    _updateInternalState(error: error, stackTrace: stackTrace);
+    _updateInternalState(
+      error: error != null ? (error: error, stackTrace: stackTrace) : null,
+    );
   }
 
   /// Clears the current error and stack trace.
@@ -92,32 +94,18 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// This will trigger a notification to listeners.
   @protected
   void clearError() {
-    _updateInternalState(error: null, stackTrace: null);
+    _updateInternalState(error: null);
   }
 
-  /// Internal helper to update state attributes atomically and notify once.
-  void _updateInternalState({
-    NeatLoading? loading,
-    bool isLoading = false, // Kept for partial compatibility if needed
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
+  void _updateInternalState({NeatLoading? loading, NeatError? error}) {
     bool changed = false;
 
-    // Use explicit loading record if provided, otherwise fallback to boolean toggle
-    final effectiveLoading =
-        loading ?? (isLoading ? (isUploading: false, progress: 0) : null);
-
-    if (_loading != effectiveLoading) {
-      _loading = effectiveLoading;
+    if (_loading != loading) {
+      _loading = loading;
       changed = true;
     }
     if (_error != error) {
       _error = error;
-      changed = true;
-    }
-    if (_stackTrace != stackTrace) {
-      _stackTrace = stackTrace;
       changed = true;
     }
 

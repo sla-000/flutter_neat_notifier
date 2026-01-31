@@ -151,10 +151,11 @@ class _NeatState<V extends NeatNotifier<S, E>, S, E>
     Widget content;
 
     if (_effectiveNotifier.error != null && widget.errorBuilder != null) {
-      content = widget.errorBuilder!(context, (
-        error: _effectiveNotifier.error!,
-        stackTrace: _effectiveNotifier.stackTrace,
-      ), widget.child);
+      content = widget.errorBuilder!(
+        context,
+        _effectiveNotifier.errorInfo!,
+        widget.child,
+      );
     } else if (_effectiveNotifier.isLoading && widget.loadingBuilder != null) {
       content = widget.loadingBuilder!(
         context,
