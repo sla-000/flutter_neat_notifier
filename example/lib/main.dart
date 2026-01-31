@@ -18,7 +18,7 @@ class App extends StatelessWidget {
       create: (context) => SettingsNotifier(),
       builder: (context, SettingsState state, child) {
         return MaterialApp(
-          title: 'NeatNotifier Example',
+          title: 'NeatState Example',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple,
@@ -26,7 +26,7 @@ class App extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
-          home: const MyHomePage(title: 'NeatNotifier DI Demo'),
+          home: const MyHomePage(title: 'NeatState Demo'),
         );
       },
     );
