@@ -322,12 +322,12 @@ THEN: it automatically manages loading and error states''',
   );
 
   testWidgets(
-    '''GIVEN: NeatState with onEvent
-WHEN: an event is emitted
-THEN: the onEvent callback is triggered''',
+    '''GIVEN: NeatState with onAction
+WHEN: an action is emitted
+THEN: the onAction callback is triggered''',
     (WidgetTester tester) async {
       final notifier = TestValueNotifier();
-      String? receivedEvent;
+      String? receivedAction;
 
       await tester.pumpWidget(
         Directionality(
@@ -335,17 +335,17 @@ THEN: the onEvent callback is triggered''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Content'),
-            onEvent: (context, event) {
-              receivedEvent = event as String;
+            onAction: (context, action) {
+              receivedAction = action as String;
             },
           ),
         ),
       );
 
-      notifier.emitEvent('test_event');
+      notifier.emitAction('test_action');
       await tester.pump(); // Pump to process stream
 
-      expect(receivedEvent, 'test_event');
+      expect(receivedAction, 'test_action');
     },
   );
 

@@ -3,15 +3,15 @@ import 'package:neat_notifier/neat_notifier.dart';
 // Define your State, everything is acceptable, record, equatable, freezed, etc.
 typedef CounterState = ({int counter1, int counter2, int counter3});
 
-// Define your Events
-sealed class CounterEvent {}
+// Define your Actions
+sealed class CounterAction {}
 
-class CounterMilestoneEvent extends CounterEvent {
-  CounterMilestoneEvent(this.message);
+class CounterMilestoneAction extends CounterAction {
+  CounterMilestoneAction(this.message);
   final String message;
 }
 
-class CounterNotifier extends NeatNotifier<CounterState, CounterEvent> {
+class CounterNotifier extends NeatNotifier<CounterState, CounterAction> {
   CounterNotifier() : super((counter1: 0, counter2: 0, counter3: 0));
 
   Future<void> increment1() => runTask(() async {
@@ -49,10 +49,10 @@ class CounterNotifier extends NeatNotifier<CounterState, CounterEvent> {
       counter3: value.counter3 + 1,
     );
 
-    // Emit event on milestone (every 5 increments)
+    // Emit action on milestone (every 5 increments)
     if (value.counter3 % 5 == 0) {
-      emitEvent(
-        CounterMilestoneEvent('Milestone reached: ${value.counter3} items!'),
+      emitAction(
+        CounterMilestoneAction('Milestone reached: ${value.counter3} items!'),
       );
     }
   }

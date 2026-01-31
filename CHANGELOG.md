@@ -1,6 +1,6 @@
 ## 0.1.0
 
-* **Major Refactor**: Builders (`builder`, `onEvent`, `errorBuilder`, `loadingBuilder`) now receive state/data directly instead of the notifier instance.
+* **Major Refactor**: Builders (`builder`, `onAction`, `errorBuilder`, `loadingBuilder`) now receive state/data directly instead of the notifier instance.
 * **Simplified Generics**: `NeatState` now supports zero-parameter type inference when providing the `create` callback.
 * **Enhanced Loading**: Introduced `NeatLoading` record with `isUploading` and `progress` fields.
 * **Structured Errors**: Introduced `NeatError` record grouping `error` and `stackTrace`.

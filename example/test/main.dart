@@ -48,7 +48,7 @@ void main() {
     expect(find.text('0'), findsNWidgets(3)); // Counters 1, 2, and 3 (stale)
   });
 
-  testWidgets('Milestone event shows SnackBar', (WidgetTester tester) async {
+  testWidgets('Milestone action shows SnackBar', (WidgetTester tester) async {
     await tester.pumpWidget(const App());
 
     final btn3 = find.widgetWithText(FloatingActionButton, '3');

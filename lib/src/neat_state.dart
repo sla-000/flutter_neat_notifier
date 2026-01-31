@@ -10,7 +10,7 @@ import 'neat_notifier.dart';
 /// - If [create] is provided, it instantiates and manages the [notifier].
 /// - If [create] is omitted, it looks up the nearest [NeatNotifier] of type [V]
 ///   in the widget tree.
-class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
+class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
   /// Creates a [NeatState].
   ///
   /// The [create] callback is used to instantiate the [NeatNotifier]. If null,
@@ -22,7 +22,7 @@ class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   /// The [child] is optional and can be used for optimization.
   /// The [rebuildWhen] callback allows for fine-grained control over rebuilds.
   /// The [errorBuilder] is called when the notifier has an active error.
-  /// The [onEvent] callback is called when the notifier emits a one-time event.
+  /// The [onAction] callback is called when the notifier emits a one-time action.
   const NeatState({
     super.key,
     this.create,
@@ -31,7 +31,7 @@ class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
     this.rebuildWhen,
     this.errorBuilder,
     this.loadingBuilder,
-    this.onEvent,
+    this.onAction,
   });
 
   /// Function to create the [NeatNotifier] instance.
@@ -55,8 +55,8 @@ class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   /// Optional callback to control when the widget rebuilds.
   final bool Function(S prev, S curr)? rebuildWhen;
 
-  /// Optional callback called when a one-time event is emitted.
-  final void Function(BuildContext context, E event)? onEvent;
+  /// Optional callback called when a one-time action is emitted.
+  final void Function(BuildContext context, A action)? onAction;
 
   /// Optional static child widget that is passed to the builders.
   final Widget? child;
@@ -83,14 +83,14 @@ class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   }
 
   @override
-  State<NeatState<V, S, E>> createState() => _NeatState<V, S, E>();
+  State<NeatState<V, S, A>> createState() => _NeatState<V, S, A>();
 }
 
-class _NeatState<V extends NeatNotifier<S, E>, S, E>
-    extends State<NeatState<V, S, E>> {
+class _NeatState<V extends NeatNotifier<S, A>, S, A>
+    extends State<NeatState<V, S, A>> {
   V? _notifier;
   late S _previousState;
-  StreamSubscription<E>? _eventSubscription;
+  StreamSubscription<A>? _actionSubscription;
   bool _isOwner = false;
 
   V get _effectiveNotifier => _notifier!;
@@ -116,16 +116,16 @@ class _NeatState<V extends NeatNotifier<S, E>, S, E>
     _notifier = notifier;
     _previousState = _effectiveNotifier.value;
     _effectiveNotifier.addListener(_handleChange);
-    _eventSubscription = _effectiveNotifier.events.listen((event) {
+    _actionSubscription = _effectiveNotifier.actions.listen((action) {
       if (mounted) {
-        widget.onEvent?.call(context, event);
+        widget.onAction?.call(context, action);
       }
     });
   }
 
   @override
   void dispose() {
-    _eventSubscription?.cancel();
+    _actionSubscription?.cancel();
     _notifier?.removeListener(_handleChange);
     if (_isOwner) {
       _notifier?.dispose();

@@ -7,15 +7,15 @@ typedef NeatError = ({Object error, StackTrace? stackTrace});
 /// A [ValueNotifier] that includes error, stack trace, and event information.
 ///
 /// [T] is the type of the state.
-/// [E] is the type of events that can be emitted.
-class NeatNotifier<T, E> extends ValueNotifier<T> {
+/// [A] is the type of actions that can be emitted.
+class NeatNotifier<T, A> extends ValueNotifier<T> {
   /// Creates a [NeatNotifier] with an initial value.
   NeatNotifier(super.value);
 
-  final _eventController = StreamController<E>.broadcast();
+  final _actionController = StreamController<A>.broadcast();
 
-  /// A stream of events emitted by this notifier.
-  Stream<E> get events => _eventController.stream;
+  /// A stream of actions emitted by this notifier.
+  Stream<A> get actions => _actionController.stream;
 
   NeatError? _error;
   NeatLoading? _loading;
@@ -35,9 +35,9 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
   /// The current loading state, if any.
   NeatLoading? get loading => _loading;
 
-  /// Emits a one-time [event] to all listeners.
-  void emitEvent(E event) {
-    _eventController.add(event);
+  /// Emits a one-time [action] to all listeners.
+  void emitAction(A action) {
+    _actionController.add(action);
   }
 
   /// Sets the loading state.
@@ -116,7 +116,7 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
 
   @override
   void dispose() {
-    _eventController.close();
+    _actionController.close();
     super.dispose();
   }
 }

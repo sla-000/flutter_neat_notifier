@@ -85,15 +85,15 @@ THEN: it updates isLoading and notifies listeners''',
     );
 
     test(
-      '''GIVEN: A NeatNotifier with Events
-WHEN: emitEvent is called
-THEN: the event is added to the events stream''',
+      '''GIVEN: A NeatNotifier with Actions
+WHEN: emitAction is called
+THEN: the action is added to the actions stream''',
       () async {
         final notifier = NeatNotifier<int, String>(0);
-        const eventMessage = 'Test Event';
+        const actionMessage = 'Test Action';
 
-        final expectation = expectLater(notifier.events, emits(eventMessage));
-        notifier.emitEvent(eventMessage);
+        final expectation = expectLater(notifier.actions, emits(actionMessage));
+        notifier.emitAction(actionMessage);
         await expectation;
       },
     );

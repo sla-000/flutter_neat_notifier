@@ -24,28 +24,28 @@ void main() {
       expect(notifier.value.counter3, 0);
     });
 
-    test('increment3 updates counter3 and emits events', () async {
-      final events = <CounterEvent>[];
-      final subscription = notifier.events.listen(events.add);
+    test('increment3 updates counter3 and emits actions', () async {
+      final actions = <CounterAction>[];
+      final subscription = notifier.actions.listen(actions.add);
 
       // 4 increments - no event
       for (var i = 0; i < 4; i++) {
         notifier.increment3();
       }
       expect(notifier.value.counter3, 4);
-      expect(events, isEmpty);
+      expect(actions, isEmpty);
 
-      // 5th increment - milestone event
+      // 5th increment - milestone action
       notifier.increment3();
       expect(notifier.value.counter3, 5);
 
       // Give the stream a moment to emit
       await Future.delayed(Duration.zero);
 
-      expect(events.length, 1);
-      expect(events.first, isA<CounterMilestoneEvent>());
-      final event = events.first as CounterMilestoneEvent;
-      expect(event.message, contains('5 items'));
+      expect(actions.length, 1);
+      expect(actions.first, isA<CounterMilestoneAction>());
+      final action = actions.first as CounterMilestoneAction;
+      expect(action.message, contains('5 items'));
 
       await subscription.cancel();
     });

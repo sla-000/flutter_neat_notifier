@@ -43,7 +43,8 @@ class MyHomePage extends StatelessWidget {
     // 2. Acts as a Provider for this screen
     return NeatState(
       create: (context) => CounterNotifier(),
-      onEvent: (context, CounterEvent event) => _showSnackbar(event, context),
+      onAction: (context, CounterAction action) =>
+          _showSnackbar(action, context),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -79,9 +80,9 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  void _showSnackbar(CounterEvent event, BuildContext context) {
-    final message = switch (event) {
-      CounterMilestoneEvent(message: final m) => m,
+  void _showSnackbar(CounterAction action, BuildContext context) {
+    final message = switch (action) {
+      CounterMilestoneAction(message: final m) => m,
     };
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -97,7 +98,7 @@ class CounterDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 4. Acts as a Consumer (no 'create' needed)
-    return NeatState<CounterNotifier, CounterState, CounterEvent>(
+    return NeatState<CounterNotifier, CounterState, CounterAction>(
       rebuildWhen: (prev, curr) =>
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
       errorBuilder: (context, error, child) => Text(

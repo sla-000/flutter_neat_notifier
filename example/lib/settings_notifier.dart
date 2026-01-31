@@ -2,18 +2,18 @@ import 'package:neat_notifier/neat_notifier.dart';
 
 typedef SettingsState = ({bool isDarkMode});
 
-sealed class SettingsEvent {}
+sealed class SettingsAction {}
 
-class ThemeChangedEvent extends SettingsEvent {
+class ThemeChangedAction extends SettingsAction {
   final bool isDarkMode;
-  ThemeChangedEvent(this.isDarkMode);
+  ThemeChangedAction(this.isDarkMode);
 }
 
-class SettingsNotifier extends NeatNotifier<SettingsState, SettingsEvent> {
+class SettingsNotifier extends NeatNotifier<SettingsState, SettingsAction> {
   SettingsNotifier() : super((isDarkMode: false));
 
   void toggleDarkMode() {
     value = (isDarkMode: !value.isDarkMode);
-    emitEvent(ThemeChangedEvent(value.isDarkMode));
+    emitAction(ThemeChangedAction(value.isDarkMode));
   }
 }
