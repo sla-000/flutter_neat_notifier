@@ -16,8 +16,7 @@ class App extends StatelessWidget {
     // 1. Acts as a Provider for the whole app
     return NeatState<SettingsNotifier, SettingsState, SettingsEvent>(
       create: (context) => SettingsNotifier(),
-      builder: (context, notifier, child) {
-        final state = notifier.value;
+      builder: (context, state, child) {
         return MaterialApp(
           title: 'NeatNotifier Example',
           theme: ThemeData(
@@ -44,7 +43,7 @@ class MyHomePage extends StatelessWidget {
     // 2. Acts as a Provider for this screen
     return NeatState<CounterNotifier, CounterState, CounterEvent>(
       create: (context) => CounterNotifier(),
-      onEvent: (context, notifier, event) => _showSnackbar(event, context),
+      onEvent: (context, event) => _showSnackbar(event, context),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -105,8 +104,7 @@ class CounterDisplay extends StatelessWidget {
           Text('Error: $error', style: const TextStyle(color: Colors.red)),
       loadingBuilder: (context, notifier, child) =>
           const CircularProgressIndicator(),
-      builder: (context, notifier, child) {
-        final state = notifier.value;
+      builder: (context, state, child) {
         return Column(
           children: [
             const Text('Counter 1 (Async + Error prone):'),

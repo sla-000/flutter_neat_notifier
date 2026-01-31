@@ -44,8 +44,8 @@ THEN: the notifier is created and initial UI is shown''',
               capturedNotifier = TestValueNotifier();
               return capturedNotifier!;
             },
-            builder: (context, notifier, child) {
-              return Text('Count: ${notifier.value}');
+            builder: (context, state, child) {
+              return Text('Count: $state');
             },
           ),
         ),
@@ -68,8 +68,8 @@ THEN: the widget rebuilds with new state''',
           textDirection: TextDirection.ltr,
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
-            builder: (context, n, child) {
-              return Text('Count: ${n.value}');
+            builder: (context, state, child) {
+              return Text('Count: $state');
             },
           ),
         ),
@@ -126,9 +126,9 @@ THEN: the widget rebuilds''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             rebuildWhen: (prev, curr) => curr > prev,
-            builder: (context, n, child) {
+            builder: (context, state, child) {
               buildCount++;
-              return Text('Count: ${n.value}');
+              return Text('Count: $state');
             },
           ),
         ),
@@ -158,9 +158,9 @@ THEN: the widget does NOT rebuild''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             rebuildWhen: (prev, curr) => false, // Never rebuild
-            builder: (context, n, child) {
+            builder: (context, state, child) {
               buildCount++;
-              return Text('Count: ${n.value}');
+              return Text('Count: $state');
             },
           ),
         ),
@@ -280,8 +280,8 @@ THEN: it automatically manages loading and error states''',
           textDirection: TextDirection.ltr,
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
-            builder: (_, n, _) =>
-                Text('Loading: ${n.isLoading}, Error: ${n.error != null}'),
+            builder: (context, state, child) =>
+                const Text('Loading: false, Error: false'),
             errorBuilder: (_, _, _, _, _) => const Text('Error State'),
             loadingBuilder: (_, _, _) => const Text('Loading State'),
           ),
@@ -335,7 +335,7 @@ THEN: the onEvent callback is triggered''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Content'),
-            onEvent: (context, notifier, event) {
+            onEvent: (context, event) {
               receivedEvent = event as String;
             },
           ),

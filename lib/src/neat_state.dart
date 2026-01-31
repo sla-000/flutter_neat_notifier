@@ -38,8 +38,7 @@ class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   final V Function(BuildContext context)? create;
 
   /// Function that returns the widget tree.
-  final Widget Function(BuildContext context, V notifier, Widget? child)?
-  builder;
+  final Widget Function(BuildContext context, S state, Widget? child)? builder;
 
   /// Optional builder that is called when the notifier has an active error.
   final Widget Function(
@@ -59,7 +58,7 @@ class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
   final bool Function(S prev, S curr)? rebuildWhen;
 
   /// Optional callback called when a one-time event is emitted.
-  final void Function(BuildContext context, V notifier, E event)? onEvent;
+  final void Function(BuildContext context, E event)? onEvent;
 
   /// Optional static child widget that is passed to the builders.
   final Widget? child;
@@ -121,7 +120,7 @@ class _NeatState<V extends NeatNotifier<S, E>, S, E>
     _effectiveNotifier.addListener(_handleChange);
     _eventSubscription = _effectiveNotifier.events.listen((event) {
       if (mounted) {
-        widget.onEvent?.call(context, _effectiveNotifier, event);
+        widget.onEvent?.call(context, event);
       }
     });
   }
@@ -168,7 +167,11 @@ class _NeatState<V extends NeatNotifier<S, E>, S, E>
         widget.child,
       );
     } else if (widget.builder != null) {
-      content = widget.builder!(context, _effectiveNotifier, widget.child);
+      content = widget.builder!(
+        context,
+        _effectiveNotifier.value,
+        widget.child,
+      );
     } else {
       content = widget.child ?? const SizedBox.shrink();
     }
