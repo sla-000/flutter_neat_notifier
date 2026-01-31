@@ -64,6 +64,12 @@ class NeatNotifier<T, E> extends ValueNotifier<T> {
 
     try {
       await task();
+
+      _updateInternalState(
+        loading: (isUploading: isUploading, progress: 100),
+        error: null,
+        stackTrace: null,
+      );
     } catch (e, s) {
       _updateInternalState(loading: null, error: e, stackTrace: s);
     } finally {

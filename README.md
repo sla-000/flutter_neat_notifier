@@ -58,22 +58,30 @@ class CounterNotifier extends NeatNotifier<CounterState, CounterEvent> {
 
 ### 2. Use NeatState in your UI
 
+You can omit generic parameters when using `create` — Dart will infer everything for you!
+
 ```dart
-NeatState<CounterNotifier, CounterState, CounterEvent>(
+NeatState(
   create: (context) => CounterNotifier(),
-  onEvent: (context, notifier, event) {
+  onEvent: (context, CounterEvent event) {
     if (event is MilestoneEvent) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(event.message)));
     }
   },
-  loadingBuilder: (context, notifier, child) => Center(child: CircularProgressIndicator()),
-  errorBuilder: (context, error, stackTrace, notifier, child) => Center(child: Text('Error: $error')),
-  builder: (context, notifier, child) {
+  loadingBuilder: (context, NeatLoading loading, child) => Center(
+    child: CircularProgressIndicator(
+      value: loading.progress > 0 ? loading.progress / 100 : null,
+    ),
+  ),
+  errorBuilder: (context, NeatError error, child) => Center(
+    child: Text('Error: ${error.error}'),
+  ),
+  builder: (context, CounterState state, child) {
     return Column(
       children: [
-        Text('Count: ${notifier.value.count}'),
+        Text('Count: ${state.count}'),
         ElevatedButton(
-          onPressed: notifier.increment,
+          onPressed: context.read<CounterNotifier>().increment,
           child: Text('Increment'),
         ),
       ],
@@ -81,6 +89,13 @@ NeatState<CounterNotifier, CounterState, CounterEvent>(
   },
 )
 ```
+
+## Features Deep Dive
+
+- **Enhanced Loading**: `NeatLoading` record provides `isUploading` and `progress`.
+- **Structured Errors**: `NeatError` record groups `error` and `stackTrace`.
+- **Direct State Access**: Builders receive the state/data directly for cleaner code.
+- **Smart Inference**: Zero-parameter shorthand for `NeatState`.
 
 ## Additional information
 

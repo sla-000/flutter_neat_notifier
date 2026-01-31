@@ -16,12 +16,16 @@ class CounterNotifier extends NeatNotifier<CounterState, CounterEvent> {
 
   Future<void> increment1() => runTask(() async {
     // Simulate async repository call
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    setLoading((isUploading: false, progress: 50));
 
     // Simulate a random error (50% chance)
     if (DateTime.now().millisecond % 2 == 0) {
       throw Exception('Failed to update counter 1. Try again!');
     }
+
+    await Future.delayed(const Duration(milliseconds: 500));
 
     value = (
       counter1: value.counter1 + 1,
