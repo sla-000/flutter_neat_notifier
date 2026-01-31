@@ -64,13 +64,17 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
   /// Finds the nearest [NeatNotifier] of type [V] in the widget tree.
   ///
   /// If [listen] is true (default), the widget will rebuild when the notifier updates.
+  /// An optional [aspect] can be provided to granularly control rebuilds.
   static V of<V extends NeatNotifier<dynamic, dynamic>>(
     BuildContext context, {
     bool listen = true,
+    Object? aspect,
   }) {
     final provider = listen
-        ? context
-              .dependOnInheritedWidgetOfExactType<_NeatInheritedProvider<V>>()
+        ? InheritedModel.inheritFrom<_NeatInheritedProvider<V>>(
+            context,
+            aspect: aspect,
+          )
         : context.getInheritedWidgetOfExactType<_NeatInheritedProvider<V>>();
 
     if (provider == null) {
@@ -175,21 +179,55 @@ class _NeatState<V extends NeatNotifier<S, A>, S, A>
     // Always wrap in a provider if we are managing/holding a notifier
     return _NeatInheritedProvider<V>(
       notifier: _effectiveNotifier,
+      state: _effectiveNotifier.value,
+      previousState: _previousState,
       child: content,
     );
   }
 }
 
-/// Internal widget that enables Dependency Injection for [NeatNotifier]s.
+/// Internal widget that enables Dependency Injection and selectors for [NeatNotifier]s.
 class _NeatInheritedProvider<V extends NeatNotifier<dynamic, dynamic>>
-    extends InheritedWidget {
-  const _NeatInheritedProvider({required this.notifier, required super.child});
+    extends InheritedModel<Object> {
+  const _NeatInheritedProvider({
+    required this.notifier,
+    required this.state,
+    required this.previousState,
+    required super.child,
+  });
 
   final V notifier;
+  final dynamic state;
+  final dynamic previousState;
 
   @override
   bool updateShouldNotify(_NeatInheritedProvider<V> oldWidget) =>
-      notifier != oldWidget.notifier;
+      notifier != oldWidget.notifier || state != oldWidget.state;
+
+  @override
+  bool updateShouldNotifyDependent(
+    _NeatInheritedProvider<V> oldWidget,
+    Set<Object> dependencies,
+  ) {
+    if (state != oldWidget.state) {
+      for (final aspect in dependencies) {
+        if (aspect is Function) {
+          try {
+            final oldSelected = aspect(oldWidget.state);
+            final newSelected = aspect(state);
+            if (oldSelected != newSelected) return true;
+          } catch (_) {
+            // If selector fails (e.g. type mismatch), safely rebuild
+            return true;
+          }
+        } else {
+          // Non-functional aspect? Fallback to rebuild
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 /// Extensions for easier access to [NeatNotifier]s from [BuildContext].
@@ -201,4 +239,16 @@ extension NeatContextExtensions on BuildContext {
   /// Retrieves the nearest [NeatNotifier] of type [V] and registers for rebuilds.
   V watch<V extends NeatNotifier<dynamic, dynamic>>() =>
       NeatState.of<V>(this, listen: true);
+
+  /// Listens to a specific part of the state of the nearest [NeatNotifier] of type [V].
+  ///
+  /// [V] is the Notifier type.
+  /// [S] is the State type of the notifier.
+  /// [R] is the return type of the selector.
+  R select<V extends NeatNotifier<S, dynamic>, S, R>(
+    R Function(S state) selector,
+  ) {
+    final notifier = NeatState.of<V>(this, listen: true, aspect: selector);
+    return selector(notifier.value);
+  }
 }

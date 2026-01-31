@@ -53,14 +53,13 @@ class MyHomePage extends StatelessWidget {
             // 3. Simple Consumer using context.watch
             Builder(
               builder: (context) {
-                final settings = context.watch<SettingsNotifier>();
+                final isDarkMode = context
+                    .select<SettingsNotifier, SettingsState, bool>(
+                      (s) => s.isDarkMode,
+                    );
                 return IconButton(
-                  icon: Icon(
-                    settings.value.isDarkMode
-                        ? Icons.light_mode
-                        : Icons.dark_mode,
-                  ),
-                  onPressed: settings.toggleDarkMode,
+                  icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+                  onPressed: context.read<SettingsNotifier>().toggleDarkMode,
                 );
               },
             ),
@@ -152,7 +151,9 @@ class CounterActions extends StatelessWidget {
   Widget build(BuildContext context) {
     // 5. Using context.read for actions (no rebuild needed)
     final notifier = context.read<CounterNotifier>();
-    final isLoading = context.watch<CounterNotifier>().isLoading;
+    final isLoading = context.select<CounterNotifier, CounterState, bool>(
+      (s) => notifier.isLoading,
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

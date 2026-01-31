@@ -4,10 +4,6 @@ This file tracks planned features and improvements for `NeatState`. Items will b
 
 ## Planned Features
 
-- [ ] **Functional Selectors (`context.select`)**
-  - Allow fine-grained rebuilds in `StatelessWidgets` using a selector pattern.
-  - Example: `final count = context.select<CounterNotifier, int>((s) => s.count);`
-
 - [ ] **Built-in Persistence (Hydrated State)**
   - Provide a mixin or interface to automatically persist state to local storage.
   - Simplified JSON serialization/deserialization logic.
@@ -21,4 +17,7 @@ This file tracks planned features and improvements for `NeatState`. Items will b
   - Useful for editors and complex forms.
 
 ## Completed Features
-*(Items move here after implementation)*
+
+- [x] **Functional Selectors (`context.select`)**
+  - Granular rebuilds using `InheritedModel`.
+  - Usage: `final count = context.select<CounterNotifier, CounterState, int>((s) => s.count);`
