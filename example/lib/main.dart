@@ -100,9 +100,9 @@ class CounterDisplay extends StatelessWidget {
     return NeatState<CounterNotifier, CounterState, CounterEvent>(
       rebuildWhen: (prev, curr) =>
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
-      errorBuilder: (context, error, stackTrace, notifier, child) =>
+      errorBuilder: (context, error, stackTrace, child) =>
           Text('Error: $error', style: const TextStyle(color: Colors.red)),
-      loadingBuilder: (context, notifier, child) =>
+      loadingBuilder: (context, state, child) =>
           const CircularProgressIndicator(),
       builder: (context, state, child) {
         return Column(

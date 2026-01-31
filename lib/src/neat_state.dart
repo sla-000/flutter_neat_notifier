@@ -45,13 +45,12 @@ class NeatState<V extends NeatNotifier<S, E>, S, E> extends StatefulWidget {
     BuildContext context,
     Object error,
     StackTrace? stackTrace,
-    V notifier,
     Widget? child,
   )?
   errorBuilder;
 
   /// Optional builder that is called when the notifier is in a loading state.
-  final Widget Function(BuildContext context, V notifier, Widget? child)?
+  final Widget Function(BuildContext context, S state, Widget? child)?
   loadingBuilder;
 
   /// Optional callback to control when the widget rebuilds.
@@ -157,13 +156,12 @@ class _NeatState<V extends NeatNotifier<S, E>, S, E>
         context,
         _effectiveNotifier.error!,
         _effectiveNotifier.stackTrace,
-        _effectiveNotifier,
         widget.child,
       );
     } else if (_effectiveNotifier.isLoading && widget.loadingBuilder != null) {
       content = widget.loadingBuilder!(
         context,
-        _effectiveNotifier,
+        _effectiveNotifier.value,
         widget.child,
       );
     } else if (widget.builder != null) {

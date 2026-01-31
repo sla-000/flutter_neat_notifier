@@ -188,7 +188,7 @@ THEN: the errorBuilder is shown''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Normal Content'),
-            errorBuilder: (context, error, stackTrace, n, child) {
+            errorBuilder: (context, error, stackTrace, child) {
               return Text('Error: $error');
             },
           ),
@@ -218,7 +218,7 @@ THEN: the normal builder is restored''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Normal Content'),
-            errorBuilder: (context, error, stackTrace, n, child) {
+            errorBuilder: (context, error, stackTrace, child) {
               return const Text('Error UI');
             },
           ),
@@ -247,7 +247,7 @@ THEN: the loadingBuilder is shown''',
           child: NeatState<TestValueNotifier, int, dynamic>(
             create: (_) => notifier,
             builder: (_, _, _) => const Text('Normal Content'),
-            loadingBuilder: (context, n, child) {
+            loadingBuilder: (context, state, child) {
               return const Text('Loading UI');
             },
           ),
@@ -282,7 +282,7 @@ THEN: it automatically manages loading and error states''',
             create: (_) => notifier,
             builder: (context, state, child) =>
                 const Text('Loading: false, Error: false'),
-            errorBuilder: (_, _, _, _, _) => const Text('Error State'),
+            errorBuilder: (_, _, _, _) => const Text('Error State'),
             loadingBuilder: (_, _, _) => const Text('Loading State'),
           ),
         ),
@@ -368,7 +368,7 @@ THEN: the child is preserved and passed to all builders''',
                 Column(children: [const Text('Normal'), child!]),
             loadingBuilder: (_, _, child) =>
                 Column(children: [const Text('Loading'), child!]),
-            errorBuilder: (_, _, _, _, child) =>
+            errorBuilder: (_, _, _, child) =>
                 Column(children: [const Text('Error'), child!]),
           ),
         ),
