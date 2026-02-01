@@ -4,17 +4,15 @@ This file tracks planned features and improvements for `NeatState`. Items will b
 
 ## Planned Features
 
-- [ ] **Action Middleware / Interceptors**
-  - Add support for global or local interceptors to log, transform, or debounce actions.
-  - Useful for analytics and debugging.
-
 - [ ] **Undo/Redo (Time Travel)**
   - Optional history management to support "Undo" and "Redo" operations out of the box.
   - Useful for editors and complex forms.
 
 ## Completed Features
 
-- [x] **Built-in Persistence (Hydrated State)**
+- [x] **Action Middleware / Interceptors**
+  - Global `NeatObserver` for logging, analytics, and error tracking.
+  - Local `interceptors` for action transformation and filtering.
   - Mixin-based approach for optional persistence.
   - usage: `class MyNotifier extends NeatNotifier with NeatHydratedNotifier`
   - requires `NeatHydratedStorage.initialize()` before use.

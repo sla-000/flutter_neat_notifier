@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
+import 'neat_observer.dart';
 
 typedef NeatLoading = ({bool isUploading, int progress});
 typedef NeatError = ({Object error, StackTrace? stackTrace});
@@ -11,6 +12,12 @@ typedef NeatError = ({Object error, StackTrace? stackTrace});
 class NeatNotifier<T, A> extends ValueNotifier<T> {
   /// Creates a [NeatNotifier] with an initial value.
   NeatNotifier(super.value);
+  @override
+  set value(T newValue) {
+    if (value == newValue) return;
+    super.value = newValue;
+    observer?.onStateChange(this, newValue);
+  }
 
   final _actionController = StreamController<A>.broadcast();
 
@@ -35,9 +42,32 @@ class NeatNotifier<T, A> extends ValueNotifier<T> {
   /// The current loading state, if any.
   NeatLoading? get loading => _loading;
 
+  /// The global observer for all [NeatNotifier] instances.
+  static NeatObserver? observer;
+
+  /// A list of interceptors that can transform or block actions.
+  ///
+  /// Interceptors are called in order. If an interceptor returns `null`,
+  /// the action is blocked and further interceptors are not called.
+  final List<A? Function(A action)> interceptors = [];
+
   /// Emits a one-time [action] to all listeners.
+  ///
+  /// The action first passes through [interceptors]. If any interceptor
+  /// returns `null`, the action is blocked. Otherwise, it triggers the
+  /// global [observer] and is then added to the [actions] stream.
   void emitAction(A action) {
-    _actionController.add(action);
+    A? interceptedAction = action;
+
+    for (final interceptor in interceptors) {
+      if (interceptedAction == null) break;
+      interceptedAction = interceptor(interceptedAction);
+    }
+
+    if (interceptedAction == null) return;
+
+    observer?.onAction(this, interceptedAction);
+    _actionController.add(interceptedAction);
   }
 
   /// Sets the loading state.
@@ -106,10 +136,14 @@ class NeatNotifier<T, A> extends ValueNotifier<T> {
     }
     if (_error != error) {
       _error = error;
+      if (error != null) {
+        observer?.onError(this, error.error, error.stackTrace);
+      }
       changed = true;
     }
 
     if (changed) {
+      observer?.onStateChange(this, value);
       notifyListeners();
     }
   }

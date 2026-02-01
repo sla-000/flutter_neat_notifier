@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'counter_notifier.dart';
 import 'theme_notifier.dart';
 import 'simple_storage.dart';
+import 'logger_observer.dart';
 
 void main() async {
   // 1. Initialize storage before using hydrated notifiers
@@ -11,6 +12,10 @@ void main() async {
   final storage = SimpleStorage();
   await storage.init();
   NeatHydratedStorage.initialize(storage);
+
+  // 2. Add global observer for logging/analytics
+  NeatNotifier.observer = LoggerObserver();
+
   runApp(const App());
 }
 
