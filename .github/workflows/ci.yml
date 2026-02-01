@@ -18,6 +18,17 @@ jobs:
         with:
           flutter-version: '3.32.0'
           channel: 'stable'
+          cache: true
+
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            **/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: Install Melos
         run: dart pub global activate melos
@@ -31,8 +42,16 @@ jobs:
       - name: Run tests with coverage
         run: melos run coverage --no-select
 
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-lcov-${{ hashFiles('.github/workflows/ci.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-lcov-
+
       - name: Install lcov
-        run: sudo apt-get install -y lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
 
       - name: Merge coverage files
         run: ./scripts/merge_coverage.sh
