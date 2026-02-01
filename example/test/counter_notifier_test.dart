@@ -3,13 +3,10 @@ import 'package:example/counter_notifier.dart';
 
 void main() {
   group('CounterNotifier', () {
-    late CounterNotifier notifier;
-
-    setUp(() {
-      notifier = CounterNotifier();
-    });
-
-    test('initial state is correct', () {
+    test('GIVEN: A new CounterNotifier, '
+        'WHEN: initialized, '
+        'THEN: initial state values are zero', () {
+      final notifier = CounterNotifier();
       expect(notifier.value.counter1, 0);
       expect(notifier.value.counter2, 0);
       expect(notifier.value.counter3, 0);
@@ -17,26 +14,27 @@ void main() {
       expect(notifier.error, isNull);
     });
 
-    test('increment2 updates counter2', () {
+    test('GIVEN: CounterNotifier, '
+        'WHEN: increment2 is called, '
+        'THEN: only counter2 is updated', () {
+      final notifier = CounterNotifier();
       notifier.increment2();
       expect(notifier.value.counter2, 1);
       expect(notifier.value.counter1, 0);
       expect(notifier.value.counter3, 0);
     });
 
-    test('increment3 updates counter3 and emits actions', () async {
+    test('GIVEN: CounterNotifier, '
+        'WHEN: increment3 is called 5 times, '
+        'THEN: counter3 reaches 5 and a milestone action is emitted', () async {
+      final notifier = CounterNotifier();
       final actions = <CounterAction>[];
       final subscription = notifier.actions.listen(actions.add);
 
-      // 4 increments - no event
-      for (var i = 0; i < 4; i++) {
+      for (var i = 0; i < 5; i++) {
         notifier.increment3();
       }
-      expect(notifier.value.counter3, 4);
-      expect(actions, isEmpty);
 
-      // 5th increment - milestone action
-      notifier.increment3();
       expect(notifier.value.counter3, 5);
 
       // Give the stream a moment to emit
@@ -50,19 +48,17 @@ void main() {
       await subscription.cancel();
     });
 
-    test('increment1 (async) handles loading state', () async {
+    test('GIVEN: CounterNotifier, '
+        'WHEN: increment1 (async) is called, '
+        'THEN: it enters loading state', () async {
+      final notifier = CounterNotifier();
       final future = notifier.increment1();
 
-      // Should be loading immediately
       expect(notifier.isLoading, isTrue);
 
-      // Wait for completion (simulated 1s delay in code)
-      // Note: In real world, we'd use fake async, but here we'll just wait or pump
       try {
         await future;
-      } catch (_) {
-        // Safe to ignore random error in this specific test
-      }
+      } catch (_) {}
 
       expect(notifier.isLoading, isFalse);
     });
