@@ -40,3 +40,8 @@ This project is a minimalistic state management package for Flutter.
 7.  **Test Coverage**
     - All code must be covered by tests.
     - Aim for 100% test coverage (or close to it if technically impossible).
+
+8.  **Test Organization & Naming**
+    - Test file names must correspond to the original file name with the `_test.dart` suffix.
+    - The directory structure of the `test/` folder must mirror the `lib/` folder.
+    - **Example**: `lib/src/neat_notifier.dart` -> `test/src/neat_notifier_test.dart`.
