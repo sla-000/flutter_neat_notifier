@@ -8,12 +8,12 @@ import 'neat_state.dart';
 /// This avoids the "pyramid of doom" when nesting multiple providers.
 ///
 /// [independent]: A list of functions that create notifiers. These notifiers cannot depend on each other.
-/// [codependent]: A list of builders that will be nested. These CAN depend on notifiers in [independent] or previous items in [codependent].
+/// [providers]: A list of builders that will be nested. These CAN depend on notifiers in [independent] or previous items in [providers].
 class NeatMultiState extends StatefulWidget {
   const NeatMultiState({
     required this.child,
     this.independent = const [],
-    this.codependent = const [],
+    this.providers = const [],
     super.key,
   });
 
@@ -24,7 +24,7 @@ class NeatMultiState extends StatefulWidget {
   /// Allows subsequent notifiers to depend on previous ones.
   ///
   /// Each item is a builder that takes a child and returns a widget (usually [NeatState]).
-  final List<Widget Function(Widget child)> codependent;
+  final List<Widget Function(Widget child)> providers;
 
   final Widget child;
 
@@ -72,10 +72,10 @@ class _NeatMultiStateState extends State<NeatMultiState> {
   Widget build(BuildContext context) {
     // 1. Prepare independent providers (part of final build)
 
-    // 2. Wrap codependent widgets (in reverse order)
+    // 2. Wrap provider widgets (in reverse order)
     Widget chainedChild = widget.child;
 
-    for (final builder in widget.codependent.reversed) {
+    for (final builder in widget.providers.reversed) {
       chainedChild = builder(chainedChild);
     }
 

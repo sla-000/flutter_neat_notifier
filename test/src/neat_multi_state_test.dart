@@ -109,7 +109,7 @@ void main() {
     await tester.pumpWidget(
       NeatMultiState(
         independent: [(_) => TestNotifier(10)],
-        codependent: [
+        providers: [
           (child) => NeatState(
             create: (_) => AnotherNotifier('chained'),
             child: child,
