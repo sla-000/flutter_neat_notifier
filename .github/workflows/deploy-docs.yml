@@ -27,6 +27,14 @@ jobs:
         working-directory: docs_site
         run: npm install
 
+      - name: Sync Gists
+        env:
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+          COUNTER_GIST_ID: ${{ secrets.COUNTER_GIST_ID }}
+          HYDRATED_GIST_ID: ${{ secrets.HYDRATED_GIST_ID }}
+          UNDOREDO_GIST_ID: ${{ secrets.UNDOREDO_GIST_ID }}
+        run: node scripts/sync_gists.js
+
       - name: Build site
         working-directory: docs_site
         run: npm run build
