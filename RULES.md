@@ -40,6 +40,11 @@ This project is a minimalistic state management package for Flutter.
 7.  **Test Coverage**
     - All code must be covered by tests.
     - Aim for 100% test coverage (or close to it if technically impossible).
+    - **Coverage Workflow**:
+      - Run tests with coverage: `melos run coverage --no-select`
+      - Merge coverage files: `./scripts/merge_coverage.sh`
+      - View merged coverage: `genhtml coverage_merged/lcov.info -o coverage_merged/html && open coverage_merged/html/index.html`
+    - **What to Test**: Test all business logic, including code in `main.dart` files. Only skip untestable framework entry points like `void main() { runApp(...); }`.
 
 8.  **Test Organization & Naming**
     - Test file names must correspond to the original file name with the `_test.dart` suffix.

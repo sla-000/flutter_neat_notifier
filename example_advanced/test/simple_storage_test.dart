@@ -27,5 +27,32 @@ void main() {
       await storage.write('test', 'value');
       expect(storage.read('test'), 'value');
     });
+
+    test('GIVEN: SimpleStorage with data, '
+        'WHEN: delete is called, '
+        'THEN: the key is removed', () async {
+      final storage = SimpleStorage();
+      await storage.init();
+
+      await storage.write('test', 'value');
+      expect(storage.read('test'), 'value');
+
+      await storage.delete('test');
+      expect(storage.read('test'), isNull);
+    });
+
+    test('GIVEN: SimpleStorage with data, '
+        'WHEN: clear is called, '
+        'THEN: all data is removed', () async {
+      final storage = SimpleStorage();
+      await storage.init();
+
+      await storage.write('key1', 'value1');
+      await storage.write('key2', 'value2');
+
+      await storage.clear();
+      expect(storage.read('key1'), isNull);
+      expect(storage.read('key2'), isNull);
+    });
   });
 }

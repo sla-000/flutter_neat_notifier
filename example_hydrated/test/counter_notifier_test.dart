@@ -36,5 +36,31 @@ void main() {
       notifier.increment();
       expect(notifier.value, 1);
     });
+
+    test('GIVEN: CounterNotifier, '
+        'WHEN: decrement is called, '
+        'THEN: value decreases', () {
+      final notifier = CounterNotifier();
+      notifier.increment();
+      expect(notifier.value, 1);
+      notifier.decrement();
+      expect(notifier.value, 0);
+    });
+
+    test('GIVEN: CounterNotifier, '
+        'WHEN: fromJson is called with valid data, '
+        'THEN: it returns the correct integer value', () {
+      final notifier = CounterNotifier();
+      final result = notifier.fromJson({'count': 42});
+      expect(result, 42);
+    });
+
+    test('GIVEN: CounterNotifier, '
+        'WHEN: toJson is called, '
+        'THEN: it returns the correct JSON map', () {
+      final notifier = CounterNotifier();
+      final json = notifier.toJson(42);
+      expect(json, {'count': 42});
+    });
   });
 }

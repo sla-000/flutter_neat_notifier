@@ -36,5 +36,21 @@ void main() {
       notifier.toggle();
       expect(notifier.value, isTrue);
     });
+
+    test('GIVEN: ThemeNotifier, '
+        'WHEN: fromJson is called with valid data, '
+        'THEN: it returns the correct boolean value', () {
+      final notifier = ThemeNotifier();
+      final result = notifier.fromJson({'isDarkMode': true});
+      expect(result, isTrue);
+    });
+
+    test('GIVEN: ThemeNotifier, '
+        'WHEN: toJson is called, '
+        'THEN: it returns the correct JSON map', () {
+      final notifier = ThemeNotifier();
+      final json = notifier.toJson(true);
+      expect(json, {'isDarkMode': true});
+    });
   });
 }
