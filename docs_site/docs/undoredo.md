@@ -26,6 +26,6 @@ class DrawingNotifier extends NeatNotifier<List<Offset>, void> with NeatUndoRedo
 Draw on the canvas and use the undo/redo buttons in the app bar.
 
 <iframe
-  src="https://dartpad.dev/embed-flutter.html?gh_owner=sla-000&gh_repo=flutter_neat_notifier&gh_path=docs_site/static/examples/undoredo_example.dart"
+  src="https://dartpad.dev/embed-flutter.html?sample_url=https://sla-000.github.io/flutter_neat_notifier/examples/undoredo_example.dart"
   style={{width: '100%', height: '500px', border: 'none'}}
 ></iframe>
