@@ -36,5 +36,5 @@ Try toggling the theme and refreshing the page (simulated via the "Run" button i
 ></iframe>
 
 :::tip
-In a real application, you would use a persistent storage like `shared_preferences` or `hive`. See the [Advanced Patterns](https://github.com/sla-000/neat_state/tree/main/example_advanced) folder for a storage implementation using `path_provider`.
+In a real application, you would use a persistent storage like `shared_preferences` or `hive`. See the [Advanced Patterns](https://github.com/sla-000/flutter_neat_notifier/tree/main/example_advanced) folder for a storage implementation using `path_provider`.
 :::
