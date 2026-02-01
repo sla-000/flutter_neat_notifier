@@ -24,22 +24,29 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 2. Hydrated Notifier handles persistence automatically
-    return NeatState(
-      create: (context) => ThemeNotifier(),
-      builder: (context, bool isDarkMode, child) {
-        return MaterialApp(
-          title: 'NeatState Example',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.deepPurple,
-              brightness: isDarkMode ? Brightness.dark : Brightness.light,
+    // 3. Use NeatMultiState to provide multiple notifiers
+    return NeatMultiState(
+      createList: [(_) => ThemeNotifier(), (_) => CounterNotifier()],
+      child: Builder(
+        builder: (context) {
+          // 4. Listen to the theme state
+          final isDarkMode = context.select<ThemeNotifier, bool, bool>(
+            (state) => state,
+          );
+
+          return MaterialApp(
+            title: 'NeatState Example',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.deepPurple,
+                brightness: isDarkMode ? Brightness.dark : Brightness.light,
+              ),
+              useMaterial3: true,
             ),
-            useMaterial3: true,
-          ),
-          home: const MyHomePage(title: 'NeatState Demo'),
-        );
-      },
+            home: const MyHomePage(title: 'NeatState Demo'),
+          );
+        },
+      ),
     );
   }
 }
@@ -51,49 +58,27 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 2. Acts as a Provider for this screen
-    return NeatState(
-      create: (context) => CounterNotifier(),
-      onAction: (context, CounterAction action) =>
-          _showSnackbar(context, action),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(title),
-          actions: [
-            // 3. Simple Consumer using context.watch
-            Builder(
-              builder: (context) {
-                final isDarkMode = context.watch<ThemeNotifier>().value;
-                return IconButton(
-                  icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
-                  onPressed: context.read<ThemeNotifier>().toggle,
-                );
-              },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(title),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
             ),
-          ],
-        ),
-        body: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CounterDisplay(),
-              SizedBox(height: 32),
-              CounterActions(),
-            ],
+            onPressed: context.read<ThemeNotifier>().toggle,
           ),
+        ],
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [CounterDisplay(), SizedBox(height: 32), CounterActions()],
         ),
       ),
-    );
-  }
-
-  void _showSnackbar(BuildContext context, CounterAction action) {
-    final message = switch (action) {
-      CounterMilestoneAction(message: final m) => m,
-    };
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.deepPurple),
     );
   }
 }
@@ -104,7 +89,7 @@ class CounterDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 4. Acts as a Consumer (no 'create' needed)
+    // 5. Acts as a Consumer (no 'create' needed)
     return NeatState<CounterNotifier, CounterState, CounterAction>(
       rebuildWhen: (prev, curr) =>
           prev.counter1 != curr.counter1 || prev.counter2 != curr.counter2,
@@ -192,8 +177,11 @@ class CounterActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 5. Using context.read for actions (no rebuild needed)
+    // 6. Using context.read for actions (no rebuild needed)
     final notifier = context.read<CounterNotifier>();
+
+    // We can select specific properties to listen to,
+    // but here we just want to know if it's loading to disable button
     final isLoading = context.select<CounterNotifier, CounterState, bool>(
       (s) => notifier.isLoading,
     );

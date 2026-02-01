@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'neat_notifier.dart';
+import 'neat_multi_state.dart';
 
 /// A widget that manages the lifecycle of a [NeatNotifier] and rebuilds
 /// its children when the notifier updates based on custom logic.
@@ -61,6 +62,8 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
   /// Optional static child widget that is passed to the builders.
   final Widget? child;
 
+  // ... inside NeatState class ...
+
   /// Finds the nearest [NeatNotifier] of type [V] in the widget tree.
   ///
   /// If [listen] is true (default), the widget will rebuild when the notifier updates.
@@ -70,6 +73,7 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
     bool listen = true,
     Object? aspect,
   }) {
+    // 1. Try single provider (scoped)
     final provider = listen
         ? InheritedModel.inheritFrom<_NeatInheritedProvider<V>>(
             context,
@@ -77,13 +81,24 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
           )
         : context.getInheritedWidgetOfExactType<_NeatInheritedProvider<V>>();
 
-    if (provider == null) {
-      throw FlutterError(
-        'NeatState.of() called with a context that does not contain a $V.\n'
-        'No ancestor could be found with that type. Make sure you have a parent NeatState that creates this notifier.',
-      );
+    if (provider != null) return provider.notifier;
+
+    // 2. Try multi provider (global/bag)
+    final multiProvider = listen
+        ? InheritedModel.inheritFrom<NeatMultiInheritedProvider>(
+            context,
+            aspect: V, // Use the Type 'V' as the aspect for multi-provider
+          )
+        : context.getInheritedWidgetOfExactType<NeatMultiInheritedProvider>();
+
+    if (multiProvider != null && multiProvider.notifiers.containsKey(V)) {
+      return multiProvider.notifiers[V] as V;
     }
-    return provider.notifier;
+
+    throw FlutterError(
+      'NeatState.of() called with a context that does not contain a $V.\n'
+      'No ancestor could be found with that type. Make sure you have a parent NeatState or NeatMultiState that creates this notifier.',
+    );
   }
 
   @override
