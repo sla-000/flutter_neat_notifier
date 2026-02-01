@@ -16,35 +16,29 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.0' # Matches pubspec.yaml minimum
+          flutter-version: '3.32.0'
           channel: 'stable'
 
-      - name: Install dependencies (Root)
-        run: flutter pub get
+      - name: Install Melos
+        run: dart pub global activate melos
 
-      - name: Analyze (Root)
-        run: dart analyze
+      - name: Bootstrap
+        run: melos bootstrap
 
-      - name: Run tests (Root)
-        run: flutter test --coverage
+      - name: Analyze
+        run: melos analyze
+
+      - name: Run tests with coverage
+        run: melos run coverage --no-select
+
+      - name: Install lcov
+        run: sudo apt-get install -y lcov
+
+      - name: Merge coverage files
+        run: ./scripts/merge_coverage.sh
 
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          file: coverage/lcov.info
-
-      - name: Install dependencies (Example)
-        run: |
-          cd example
-          flutter pub get
-
-      - name: Analyze (Example)
-        run: |
-          cd example
-          dart analyze
-
-      - name: Run tests (Example)
-        run: |
-          cd example
-          flutter test
+          path-to-lcov: coverage_merged/lcov.info
