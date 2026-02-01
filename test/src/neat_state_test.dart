@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 
 class TestValueNotifier extends NeatNotifier<int, dynamic> {
   TestValueNotifier() : super(0);

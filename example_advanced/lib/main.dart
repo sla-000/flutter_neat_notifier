@@ -1,4 +1,4 @@
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 import 'package:flutter/material.dart';
 
 import 'counter_notifier.dart';

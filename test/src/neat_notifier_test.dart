@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 
 class TestNotifier extends NeatNotifier<int, dynamic> {
   TestNotifier() : super(0);

@@ -1,4 +1,4 @@
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 import 'dart:developer' as dev;
 
 class LoggerObserver extends NeatObserver {

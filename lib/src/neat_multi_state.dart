@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'neat_notifier.dart';
-import 'neat_state.dart';
 
 /// A widget that provides multiple [NeatNotifier]s to its descendants.
 ///

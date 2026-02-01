@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 
 class MockObserver extends NeatObserver {
   final List<dynamic> actions = [];

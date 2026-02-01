@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SimpleStorage implements NeatStorage {

@@ -1,4 +1,5 @@
-import 'package:neat_notifier/neat_notifier.dart';
+import 'neat_notifier.dart';
+import 'neat_storage.dart';
 
 /// A mixin that adds persistence to a [NeatNotifier].
 ///

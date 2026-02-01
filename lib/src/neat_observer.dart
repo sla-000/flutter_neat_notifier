@@ -1,4 +1,4 @@
-import '../neat_notifier.dart';
+import 'neat_notifier.dart';
 
 /// An interface for observing actions, state changes, and errors
 /// across all [NeatNotifier] instances.

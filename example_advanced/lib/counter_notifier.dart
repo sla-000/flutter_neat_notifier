@@ -1,4 +1,4 @@
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 
 // Define your State, everything is acceptable, record, equatable, freezed, etc.
 typedef CounterState = ({int counter1, int counter2, int counter3});

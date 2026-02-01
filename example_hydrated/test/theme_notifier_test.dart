@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:example_hydrated/theme_notifier.dart';
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 
 class MockStorage implements NeatStorage {
   Map<String, Object?> data = {};
@@ -33,9 +32,9 @@ void main() {
         'WHEN: toggle is called, '
         'THEN: themeMode changes', () {
       final notifier = ThemeNotifier();
-      expect(notifier.value, ThemeMode.light);
+      expect(notifier.value, false);
       notifier.toggle();
-      expect(notifier.value, ThemeMode.dark);
+      expect(notifier.value, true);
     });
   });
 }

@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  neat_notifier:
+  neat_state:
     path: ../
   path_provider: ^2.1.0
   # Use with the CupertinoIcons class for iOS style icons.

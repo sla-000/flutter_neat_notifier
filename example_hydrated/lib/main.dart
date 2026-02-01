@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:neat_notifier/neat_notifier.dart';
+import 'package:neat_state/neat_state.dart';
 import 'simple_storage.dart';
 import 'theme_notifier.dart';
 import 'counter_notifier.dart';
