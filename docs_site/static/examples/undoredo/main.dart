@@ -58,6 +58,13 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
   const NeatState({super.key, this.create, this.builder});
   final V Function(BuildContext context)? create;
   final Widget Function(BuildContext context, S state, Widget? child)? builder;
+
+  static V of<V extends NeatNotifier<dynamic, dynamic>>(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_NeatInheritedProvider<V>>()!
+        .notifier;
+  }
+
   @override
   State<NeatState<V, S, A>> createState() => _NeatState<V, S, A>();
 }
@@ -65,17 +72,49 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
 class _NeatState<V extends NeatNotifier<S, A>, S, A>
     extends State<NeatState<V, S, A>> {
   V? _notifier;
+
   @override
   void initState() {
     super.initState();
     _notifier = widget.create!(context);
+    _notifier!.addListener(_handleChange);
+  }
+
+  void _handleChange() => setState(() {});
+
+  @override
+  void dispose() {
+    _notifier?.removeListener(_handleChange);
+    _notifier?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _notifier!.addListener(() => setState(() {}));
-    return widget.builder!(context, _notifier!.value, null);
+    return _NeatInheritedProvider<V>(
+      notifier: _notifier!,
+      state: _notifier!.value,
+      child: Builder(
+        builder: (context) {
+          return widget.builder!(context, _notifier!.value, null);
+        },
+      ),
+    );
   }
+}
+
+class _NeatInheritedProvider<V extends NeatNotifier<dynamic, dynamic>>
+    extends InheritedWidget {
+  const _NeatInheritedProvider({
+    required this.notifier,
+    required this.state,
+    required super.child,
+  });
+  final V notifier;
+  final dynamic state;
+  @override
+  bool updateShouldNotify(_NeatInheritedProvider<V> oldWidget) =>
+      state != oldWidget.state;
 }
 
 // --- App Code ---
@@ -135,11 +174,7 @@ class UndoRedoDemo extends StatelessWidget {
 // Helper just for this demo code to work in a single block
 extension on DrawingNotifier {
   static DrawingNotifier of(BuildContext context) =>
-      (context
-              .findAncestorStateOfType<
-                _NeatState<DrawingNotifier, List<Offset>, void>
-              >()!)
-          ._notifier!;
+      NeatState.of<DrawingNotifier>(context);
 }
 
 class SimplePainter extends CustomPainter {

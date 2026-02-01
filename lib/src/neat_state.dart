@@ -179,36 +179,36 @@ class _NeatState<V extends NeatNotifier<S, A>, S, A>
 
   @override
   Widget build(BuildContext context) {
-    Widget content;
-
-    if (_effectiveNotifier.error != null && widget.errorBuilder != null) {
-      content = widget.errorBuilder!(
-        context,
-        _effectiveNotifier.errorInfo!,
-        widget.child,
-      );
-    } else if (_effectiveNotifier.isLoading && widget.loadingBuilder != null) {
-      content = widget.loadingBuilder!(
-        context,
-        _effectiveNotifier.loading!,
-        widget.child,
-      );
-    } else if (widget.builder != null) {
-      content = widget.builder!(
-        context,
-        _effectiveNotifier.value,
-        widget.child,
-      );
-    } else {
-      content = widget.child ?? const SizedBox.shrink();
-    }
-
-    // Always wrap in a provider if we are managing/holding a notifier
     return _NeatInheritedProvider<V>(
       notifier: _effectiveNotifier,
       state: _effectiveNotifier.value,
       previousState: _previousState,
-      child: content,
+      child: Builder(
+        builder: (context) {
+          if (_effectiveNotifier.error != null && widget.errorBuilder != null) {
+            return widget.errorBuilder!(
+              context,
+              _effectiveNotifier.errorInfo!,
+              widget.child,
+            );
+          } else if (_effectiveNotifier.isLoading &&
+              widget.loadingBuilder != null) {
+            return widget.loadingBuilder!(
+              context,
+              _effectiveNotifier.loading!,
+              widget.child,
+            );
+          } else if (widget.builder != null) {
+            return widget.builder!(
+              context,
+              _effectiveNotifier.value,
+              widget.child,
+            );
+          } else {
+            return widget.child ?? const SizedBox.shrink();
+          }
+        },
+      ),
     );
   }
 }

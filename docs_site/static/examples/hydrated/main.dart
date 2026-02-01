@@ -101,25 +101,39 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
 class _NeatState<V extends NeatNotifier<S, A>, S, A>
     extends State<NeatState<V, S, A>> {
   V? _notifier;
+
   @override
   void initState() {
     super.initState();
-    if (widget.create != null) _notifier = widget.create!(context);
+    if (widget.create != null) {
+      _notifier = widget.create!(context);
+      _notifier!.addListener(_handleChange);
+    }
   }
+
+  void _handleChange() => setState(() {});
 
   @override
   void dispose() {
+    _notifier?.removeListener(_handleChange);
     _notifier?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _notifier!.addListener(() => setState(() {}));
     return _NeatInheritedProvider<V>(
       notifier: _notifier!,
       state: _notifier!.value,
-      child: widget.builder!(context, _notifier!.value, widget.child),
+      child: Builder(
+        builder: (context) {
+          if (widget.builder != null) {
+            return widget.builder!(context, _notifier!.value, widget.child);
+          } else {
+            return widget.child ?? const SizedBox.shrink();
+          }
+        },
+      ),
     );
   }
 }

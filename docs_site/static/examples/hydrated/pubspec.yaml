@@ -1,0 +1,4 @@
+name: hydrated_example
+dependencies:
+  flutter:
+    sdk: flutter
