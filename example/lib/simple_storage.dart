@@ -10,8 +10,8 @@ class SimpleStorage implements NeatStorage {
 
   /// Initializes the storage by loading data from a file in the temp directory.
   Future<void> init() async {
-    final tempDir = await getTemporaryDirectory();
-    _file = File('${tempDir.path}/neat_storage.json');
+    final supportDir = await getApplicationSupportDirectory();
+    _file = File('${supportDir.path}/neat_storage.json');
 
     if (await _file.exists()) {
       try {
@@ -24,6 +24,9 @@ class SimpleStorage implements NeatStorage {
   }
 
   Future<void> _save() async {
+    if (!await _file.exists()) {
+      await _file.create(recursive: true);
+    }
     await _file.writeAsString(json.encode(_data));
   }
 
