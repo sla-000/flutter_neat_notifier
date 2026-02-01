@@ -44,13 +44,20 @@ void main() {
       'THEN: the app theme changes', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
-    // Initially light mode (white background usually)
-    final scaffoldBefore = tester.widget<Scaffold>(find.byType(Scaffold));
+    // Initially light mode
+    expect(
+      Theme.of(tester.element(find.byType(Scaffold))).brightness,
+      Brightness.light,
+    );
 
     await tester.tap(find.byIcon(Icons.dark_mode));
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.light_mode), findsOneWidget);
+    expect(
+      Theme.of(tester.element(find.byType(Scaffold))).brightness,
+      Brightness.dark,
+    );
   });
 
   testWidgets('GIVEN: A notifier reaches a milestone, '

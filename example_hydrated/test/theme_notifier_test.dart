@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:example_hydrated/theme_notifier.dart';
 import 'package:neat_notifier/neat_notifier.dart';
