@@ -1,7 +1,7 @@
 name: neat_state
 description: "A lightweight, feature-rich state management package for Flutter that simplifies handling of signals, events, and async states (loading/error) using ValueNotifier."
 version: 1.0.0
-homepage: https://sla-000.github.io/neat_state/
+homepage: https://sla-000.github.io/flutter_neat_notifier/
 repository: https://github.com/sla-000/flutter_neat_notifier
 
 environment:

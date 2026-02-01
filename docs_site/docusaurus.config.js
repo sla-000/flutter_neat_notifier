@@ -23,7 +23,7 @@ const config = {
   url: 'https://sla-000.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/neat_state/',
+  baseUrl: '/flutter_neat_notifier/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.

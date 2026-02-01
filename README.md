@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Coverage Status](https://coveralls.io/repos/github/sla-000/flutter_neat_notifier/badge.svg?branch=main)](https://coveralls.io/github/sla-000/flutter_neat_notifier?branch=main)
-[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://sla-000.github.io/neat_state/)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://sla-000.github.io/flutter_neat_notifier/)
 
 A lightweight, feature-rich state management package for Flutter that builds upon `ValueNotifier` to provide a robust solution for handling states, one-time actions, and asynchronous operations with built-in loading and error management.
 
