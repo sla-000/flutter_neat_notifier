@@ -1,7 +1,7 @@
 import 'package:neat_notifier/neat_notifier.dart';
 
-class ThemeNotifier extends NeatNotifier<bool, dynamic>
-    with NeatHydratedNotifier<bool, dynamic> {
+class ThemeNotifier extends NeatNotifier<bool, Never>
+    with NeatHydratedNotifier<bool, Never> {
   ThemeNotifier() : super(false) {
     hydrate();
   }
