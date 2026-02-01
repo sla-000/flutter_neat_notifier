@@ -22,6 +22,7 @@ const sidebars = {
     'async_operations',
     'multi_state',
     'context_extensions',
+    'advanced',
   ],
 };
 

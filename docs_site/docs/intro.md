@@ -48,3 +48,4 @@ flutter pub add neat_state
 - [Async Operations](async_operations.md)
 - [Multi-State Management](multi_state.md)
 - [Context Extensions](context_extensions.md)
+- [Advanced Usage](advanced.md)
