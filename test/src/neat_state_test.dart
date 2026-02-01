@@ -509,4 +509,43 @@ void main() {
     expect(find.text('Error'), findsOneWidget);
     expect(find.byKey(childKey), findsOneWidget);
   });
+
+  testWidgets('GIVEN: NeatState widget, '
+      'WHEN: copyWith is called, '
+      'THEN: it creates a new widget with updated child', (
+    WidgetTester tester,
+  ) async {
+    final notifier = TestValueNotifier();
+    final originalChild = Container(key: const Key('original'));
+    final newChild = Container(key: const Key('new'));
+
+    final originalWidget = NeatState<TestValueNotifier, int, dynamic>(
+      create: (_) => notifier,
+      builder: (context, state, child) => child!,
+      child: originalChild,
+    );
+
+    final copiedWidget = originalWidget.copyWith(child: newChild);
+
+    expect(copiedWidget.child, newChild);
+    expect(copiedWidget.create, originalWidget.create);
+    expect(copiedWidget.builder, originalWidget.builder);
+  });
+
+  testWidgets('GIVEN: NeatState widget with child, '
+      'WHEN: copyWith is called without child parameter, '
+      'THEN: it preserves the original child', (WidgetTester tester) async {
+    final notifier = TestValueNotifier();
+    final originalChild = Container(key: const Key('original'));
+
+    final originalWidget = NeatState<TestValueNotifier, int, dynamic>(
+      create: (_) => notifier,
+      builder: (context, state, child) => child!,
+      child: originalChild,
+    );
+
+    final copiedWidget = originalWidget.copyWith();
+
+    expect(copiedWidget.child, originalChild);
+  });
 }

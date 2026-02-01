@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'neat_notifier.dart';
 
@@ -34,7 +33,6 @@ class NeatMultiState extends StatefulWidget {
 class _NeatMultiStateState extends State<NeatMultiState> {
   final Map<Type, NeatNotifier> _notifiers = {};
   final Map<Type, dynamic> _values = {};
-  final List<StreamSubscription> _subscriptions = [];
 
   @override
   void initState() {
@@ -58,9 +56,6 @@ class _NeatMultiStateState extends State<NeatMultiState> {
 
   @override
   void dispose() {
-    for (final sub in _subscriptions) {
-      sub.cancel();
-    }
     for (final notifier in _notifiers.values) {
       notifier.dispose();
     }

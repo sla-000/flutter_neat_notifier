@@ -113,4 +113,26 @@ void main() {
       expect(observer.actions, ['msg_1_2']);
     });
   });
+
+  group('NeatObserver default implementations', () {
+    test('GIVEN: NeatObserver with default implementations, '
+        'WHEN: methods are called, '
+        'THEN: they execute without errors', () {
+      // Create a concrete observer that uses default implementations
+      final observer = _DefaultObserver();
+      final notifier = TestNotifier();
+
+      // Call default implementations
+      observer.onAction(notifier, 'action');
+      observer.onStateChange(notifier, 1);
+      observer.onError(notifier, 'error', StackTrace.current);
+
+      // No assertions needed - just verify no exceptions
+    });
+  });
+}
+
+/// Concrete observer that uses default NeatObserver implementations
+class _DefaultObserver extends NeatObserver {
+  // Uses default implementations from NeatObserver
 }

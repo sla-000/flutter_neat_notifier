@@ -38,5 +38,12 @@ void main() {
       NeatHydratedStorage.initialize(storage);
       expect(NeatHydratedStorage.storage, storage);
     });
+
+    test('GIVEN: MockStorage, '
+        'WHEN: read is called, '
+        'THEN: it returns null for non-existent keys', () {
+      final storage = MockStorage();
+      expect(storage.read('nonexistent'), isNull);
+    });
   });
 }
