@@ -145,6 +145,41 @@ class CounterDisplay extends StatelessWidget {
               '${state.counter3}',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: NeatState.of<CounterNotifier>(context),
+                  builder: (context, state, _) {
+                    final notifier = NeatState.of<CounterNotifier>(
+                      context,
+                      listen: false,
+                    );
+                    return IconButton(
+                      icon: const Icon(Icons.undo),
+                      onPressed: notifier.canUndo ? notifier.undo : null,
+                      tooltip: 'Undo',
+                    );
+                  },
+                ),
+                const SizedBox(width: 16),
+                ValueListenableBuilder(
+                  valueListenable: NeatState.of<CounterNotifier>(context),
+                  builder: (context, state, _) {
+                    final notifier = NeatState.of<CounterNotifier>(
+                      context,
+                      listen: false,
+                    );
+                    return IconButton(
+                      icon: const Icon(Icons.redo),
+                      onPressed: notifier.canRedo ? notifier.redo : null,
+                      tooltip: 'Redo',
+                    );
+                  },
+                ),
+              ],
+            ),
           ],
         );
       },

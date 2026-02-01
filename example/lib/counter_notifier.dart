@@ -11,7 +11,8 @@ class CounterMilestoneAction extends CounterAction {
   final String message;
 }
 
-class CounterNotifier extends NeatNotifier<CounterState, CounterAction> {
+class CounterNotifier extends NeatNotifier<CounterState, CounterAction>
+    with NeatUndoRedoNotifier<CounterState, CounterAction> {
   CounterNotifier() : super((counter1: 0, counter2: 0, counter3: 0));
 
   Future<void> increment1() => runTask(() async {
