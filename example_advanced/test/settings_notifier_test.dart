@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:example/settings_notifier.dart';
+import 'package:example_advanced/settings_notifier.dart';
 
 void main() {
   group('SettingsNotifier', () {

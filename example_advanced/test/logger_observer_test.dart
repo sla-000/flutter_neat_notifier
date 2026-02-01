@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:example/logger_observer.dart';
+import 'package:example_advanced/logger_observer.dart';
 import 'package:neat_notifier/neat_notifier.dart';
 
 class TestNotifier extends NeatNotifier<int, String> {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:example/counter_notifier.dart';
+import 'package:example_advanced/counter_notifier.dart';
 
 void main() {
   group('CounterNotifier', () {
