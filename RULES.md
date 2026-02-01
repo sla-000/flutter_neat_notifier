@@ -50,3 +50,7 @@ This project is a minimalistic state management package for Flutter.
     - Test file names must correspond to the original file name with the `_test.dart` suffix.
     - The directory structure of the `test/` folder must mirror the `lib/` folder.
     - **Example**: `lib/src/neat_state.dart` -> `test/src/neat_state_test.dart`.
+
+9.  **GitHub Repository Integrity**
+    - NEVER change the GitHub address `https://github.com/sla-000/flutter_neat_notifier` in the `README.md`.
+    - This ensures that all links, badges, and the homepage reference in `pubspec.yaml` remain functional and point to the correct source.
