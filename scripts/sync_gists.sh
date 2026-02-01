@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # Gist IDs
-COUNTER_ID="3a160a928c3c9ad0ff86292feabd3b5d"
+
 HYDRATED_ID="9399b7b0b55520dfd79de5a306ae97b8"
 UNDOREDO_ID="70970fba69ad18d50c58a2f5dc2a0ca3"
-ASYNC_OPERATIONS_ID="" # TODO: Add Gist ID
-MULTI_STATE_ID="" # TODO: Add Gist ID
-CONTEXT_EXTENSIONS_ID="" # TODO: Add Gist ID
+ASYNC_OPERATIONS_ID="e534a9215990eb21879624b7ce64664e"
+MULTI_STATE_ID="2dfd951bd00cbe86f91bfb13cd03688f"
+CONTEXT_EXTENSIONS_ID="da2a349a99e82a6a45692126d957cc2e"
+SIMPLE_ID="3a160a928c3c9ad0ff86292feabd3b5d"
 
 # Check for Gist Token
 if [ -z "$GIST_TOKEN" ]; then
@@ -47,9 +48,10 @@ update_gist() {
   fi
 }
 
-update_gist "counter" "$COUNTER_ID"
+
 update_gist "hydrated" "$HYDRATED_ID"
 update_gist "undoredo" "$UNDOREDO_ID"
 update_gist "async_operations" "$ASYNC_OPERATIONS_ID"
 update_gist "multi_state" "$MULTI_STATE_ID"
 update_gist "context_extensions" "$CONTEXT_EXTENSIONS_ID"
+update_gist "simple" "$SIMPLE_ID"

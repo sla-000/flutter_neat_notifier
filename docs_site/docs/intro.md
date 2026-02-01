@@ -25,10 +25,24 @@ Here is a simple counter example working live.
 
 
 
+## Installation
+
+Add `neat_state` to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  neat_state: ^2.0.0
+```
+
+Or run:
+
+```bash
+flutter pub add neat_state
+```
+
+
 ## Next Steps
 
-- [Installation](./intro.md#installation)
-- [Simple Example](./intro.md#simple-example)
 - [Hydrated Notifiers](hydrated.md)
 - [Undo/Redo](undoredo.md)
 - [Async Operations](async_operations.md)

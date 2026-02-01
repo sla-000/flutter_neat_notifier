@@ -45,6 +45,6 @@ See the [Context Extensions](context_extensions.md) page for detailed usage of `
 Here is an example showing multiple notifiers (Counter, Theme, User) working together.
 
 <iframe
-  src="https://dartpad.dev/embed-flutter.html?id=ID_GOES_HERE"
+  src="https://dartpad.dev/embed-flutter.html?id=2dfd951bd00cbe86f91bfb13cd03688f"
   style={{width: '100%', height: '500px', border: 'none'}}
 ></iframe>
