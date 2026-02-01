@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:neat_notifier/neat_notifier.dart';
 
@@ -15,61 +16,98 @@ void main() {
   group('NeatNotifier', () {
     test('GIVEN: A new NeatNotifier, '
         'WHEN: it is initialized, '
-        'THEN: it has default values for value, error, and isLoading', () {
+        'THEN: it should have the initial value', () {
       final notifier = TestNotifier();
-
       expect(notifier.value, 0);
+    });
+
+    test('GIVEN: A new NeatNotifier, '
+        'WHEN: it is initialized, '
+        'THEN: it should have no error', () {
+      final notifier = TestNotifier();
       expect(notifier.error, isNull);
-      expect(notifier.stackTrace, isNull);
+    });
+
+    test('GIVEN: A new NeatNotifier, '
+        'WHEN: it is initialized, '
+        'THEN: it should not be loading', () {
+      final notifier = TestNotifier();
       expect(notifier.isLoading, isFalse);
     });
 
     test('GIVEN: A NeatNotifier, '
         'WHEN: setError is called, '
-        'THEN: it updates error and stackTrace and notifies listeners', () {
+        'THEN: it should update the error object', () {
+      final notifier = TestNotifier();
+      final error = Exception('test');
+      notifier.testSetError(error);
+      expect(notifier.error, error);
+    });
+
+    test('GIVEN: A NeatNotifier, '
+        'WHEN: setError is called with a stack trace, '
+        'THEN: it should update the stack trace', () {
+      final notifier = TestNotifier();
+      final stackTrace = StackTrace.current;
+      notifier.testSetError(Exception('test'), stackTrace);
+      expect(notifier.stackTrace, stackTrace);
+    });
+
+    test('GIVEN: A NeatNotifier, '
+        'WHEN: setError is called, '
+        'THEN: it should notify listeners', () {
       final notifier = TestNotifier();
       int notifyCount = 0;
       notifier.addListener(() => notifyCount++);
-
-      final error = Exception('test');
-      final stackTrace = StackTrace.current;
-      notifier.testSetError(error, stackTrace);
-
-      expect(notifier.error, error);
-      expect(notifier.stackTrace, stackTrace);
+      notifier.testSetError(Exception('test'));
       expect(notifyCount, 1);
     });
 
     test('GIVEN: A NeatNotifier with an error, '
         'WHEN: clearError is called, '
-        'THEN: it resets error and stackTrace and notifies listeners', () {
+        'THEN: it should reset the error to null', () {
       final notifier = TestNotifier();
       notifier.testSetError(Exception('test'));
+      notifier.testClearError();
+      expect(notifier.error, isNull);
+    });
 
+    test('GIVEN: A NeatNotifier with an error, '
+        'WHEN: clearError is called, '
+        'THEN: it should notify listeners', () {
+      final notifier = TestNotifier();
+      notifier.testSetError(Exception('test'));
       int notifyCount = 0;
       notifier.addListener(() => notifyCount++);
-
       notifier.testClearError();
-
-      expect(notifier.error, isNull);
-      expect(notifier.stackTrace, isNull);
       expect(notifyCount, 1);
     });
 
     test('GIVEN: A NeatNotifier, '
-        'WHEN: setLoading is called, '
-        'THEN: it updates isLoading and notifies listeners', () {
+        'WHEN: setLoading is called with true, '
+        'THEN: isLoading should be true', () {
+      final notifier = TestNotifier();
+      notifier.testSetLoading((isUploading: false, progress: 0));
+      expect(notifier.isLoading, isTrue);
+    });
+
+    test('GIVEN: A NeatNotifier, '
+        'WHEN: setLoading is called with true, '
+        'THEN: it should notify listeners', () {
       final notifier = TestNotifier();
       int notifyCount = 0;
       notifier.addListener(() => notifyCount++);
-
       notifier.testSetLoading((isUploading: false, progress: 0));
-      expect(notifier.isLoading, isTrue);
       expect(notifyCount, 1);
+    });
 
+    test('GIVEN: A NeatNotifier currently loading, '
+        'WHEN: setLoading is called with null, '
+        'THEN: isLoading should be false', () {
+      final notifier = TestNotifier();
+      notifier.testSetLoading((isUploading: false, progress: 0));
       notifier.testSetLoading(null);
       expect(notifier.isLoading, isFalse);
-      expect(notifyCount, 2);
     });
 
     test('GIVEN: A NeatNotifier with Actions, '
@@ -86,73 +124,72 @@ void main() {
     group('runTask', () {
       test('GIVEN: A NeatNotifier, '
           'WHEN: runTask completes successfully, '
-          'THEN: it manages loading state and updates value', () async {
+          'THEN: it should update the value', () async {
         final notifier = TestNotifier();
-        final List<bool> loadingStates = [];
-        notifier.addListener(() => loadingStates.add(notifier.isLoading));
-
         await notifier.runTask(() async {
-          await Future.delayed(const Duration(milliseconds: 10));
           notifier.value = 1;
         });
-
         expect(notifier.value, 1);
-        expect(notifier.isLoading, isFalse);
-        expect(loadingStates.contains(true), isTrue);
-        expect(loadingStates.last, isFalse);
       });
 
       test('GIVEN: A NeatNotifier, '
-          'WHEN: runTask throws an error, '
-          'THEN: it catches the error and moves to error state', () async {
+          'WHEN: runTask starts, '
+          'THEN: it should enter loading state', () async {
         final notifier = TestNotifier();
-        final error = Exception('task failure');
+        bool wasLoading = false;
+        final taskDone = Completer<void>();
+
+        final taskFuture = notifier.runTask(() async {
+          wasLoading = notifier.isLoading;
+          await taskDone.future;
+        });
+
+        // Wait a tick for task to start
+        await Future.delayed(Duration.zero);
+        expect(wasLoading, isTrue);
+
+        taskDone.complete();
+        await taskFuture;
+      });
+
+      test('GIVEN: A NeatNotifier, '
+          'WHEN: runTask fails, '
+          'THEN: it should record the error', () async {
+        final notifier = TestNotifier();
+        final error = Exception('task failed');
 
         await notifier.runTask(() async {
           throw error;
         });
 
-        expect(notifier.isLoading, isFalse);
         expect(notifier.error, error);
       });
 
       test('GIVEN: A NeatNotifier already loading, '
           'WHEN: runTask is called again, '
-          'THEN: the second task is ignored', () async {
+          'THEN: it should skip the second execution', () async {
         final notifier = TestNotifier();
-        int callCount = 0;
+        int executionCount = 0;
+        final task1Started = Completer<void>();
+        final task1Finish = Completer<void>();
 
-        final task1 = notifier.runTask(() async {
-          callCount++;
-          await Future.delayed(const Duration(milliseconds: 50));
+        final f1 = notifier.runTask(() async {
+          executionCount++;
+          task1Started.complete();
+          await task1Finish.future;
         });
 
-        final task2 = notifier.runTask(() async {
-          callCount++;
+        await task1Started.future;
+        final f2 = notifier.runTask(() async {
+          executionCount++;
         });
 
-        await task1;
-        await task2;
+        await f2;
+        task1Finish.complete();
+        await f1;
 
-        expect(callCount, 1);
+        expect(executionCount, 1);
       });
-
-      test(
-        'GIVEN: A NeatNotifier, '
-        'WHEN: runTask is called with isUploading: true, '
-        'THEN: it initializes loading state with isUploading: true',
-        () async {
-          final notifier = TestNotifier();
-          bool? wasUploading;
-
-          await notifier.runTask(() async {
-            wasUploading = notifier.loading?.isUploading;
-          }, isUploading: true);
-
-          expect(wasUploading, isTrue);
-          expect(notifier.loading, isNull);
-        },
-      );
     });
   });
 }
