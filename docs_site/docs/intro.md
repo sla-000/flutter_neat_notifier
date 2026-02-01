@@ -19,7 +19,7 @@ sidebar_position: 1
 Here is a simple counter example working live.
 
 <iframe
-  src="https://dartpad.dev/embed-flutter.html?sample_url=https://sla-000.github.io/flutter_neat_notifier/examples/basic_counter.dart"
+  src="https://dartpad.dev/embed-flutter.html?gh_owner=sla-000&gh_repo=flutter_neat_notifier&gh_path=docs_site/static/examples/counter&gh_branch=main"
   style={{width: '100%', height: '500px', border: 'none'}}
 ></iframe>
 

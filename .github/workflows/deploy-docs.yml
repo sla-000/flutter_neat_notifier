@@ -6,6 +6,8 @@ on:
     paths:
       - 'docs_site/**'
       - '.github/workflows/deploy-docs.yml'
+      - 'README.md'
+      - 'pubspec.yaml'
 
 jobs:
   build-and-deploy:
