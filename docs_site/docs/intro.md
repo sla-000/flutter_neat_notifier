@@ -19,13 +19,11 @@ sidebar_position: 1
 Here is a simple counter example working live.
 
 <iframe
-  src="https://dartpad.dev/embed-flutter.html?id=c7e3f8b0e7d5d7e8b6e3f8b0e7d5d7e8"
+  src="https://dartpad.dev/embed-flutter.html?gh_owner=sla-000&gh_repo=flutter_neat_notifier&gh_path=docs_site/static/examples/basic_counter.dart"
   style={{width: '100%', height: '500px', border: 'none'}}
 ></iframe>
 
-:::note
-The Gist ID above is a placeholder. In the actual implementation, we will use real Gists containing the library code and example.
-:::
+
 
 ## Next Steps
 

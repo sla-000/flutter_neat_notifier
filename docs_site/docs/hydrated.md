@@ -31,7 +31,7 @@ class SettingsNotifier extends NeatNotifier<ThemeMode, void> with NeatHydratedNo
 Try toggling the theme and refreshing the page (simulated via the "Run" button in DartPad).
 
 <iframe
-  src="https://dartpad.dev/embed-flutter.html?id=HYDRATED_EXAMPLE_ID"
+  src="https://dartpad.dev/embed-flutter.html?gh_owner=sla-000&gh_repo=flutter_neat_notifier&gh_path=docs_site/static/examples/hydrated_example.dart"
   style={{width: '100%', height: '500px', border: 'none'}}
 ></iframe>
 
