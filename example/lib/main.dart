@@ -5,9 +5,12 @@ import 'counter_notifier.dart';
 import 'theme_notifier.dart';
 import 'simple_storage.dart';
 
-void main() {
+void main() async {
   // 1. Initialize storage before using hydrated notifiers
-  NeatHydratedStorage.initialize(SimpleStorage());
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = SimpleStorage();
+  await storage.init();
+  NeatHydratedStorage.initialize(storage);
   runApp(const App());
 }
 

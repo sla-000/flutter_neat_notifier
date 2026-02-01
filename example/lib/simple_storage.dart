@@ -1,17 +1,50 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:neat_notifier/neat_notifier.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SimpleStorage implements NeatStorage {
-  final Map<String, Object?> _data = {};
+  Map<String, Object?> _data = {};
+  late File _file;
+
+  /// Initializes the storage by loading data from a file in the temp directory.
+  Future<void> init() async {
+    final tempDir = await getTemporaryDirectory();
+    _file = File('${tempDir.path}/neat_storage.json');
+
+    if (await _file.exists()) {
+      try {
+        final content = await _file.readAsString();
+        _data = Map<String, Object?>.from(json.decode(content) as Map);
+      } catch (e) {
+        _data = {};
+      }
+    }
+  }
+
+  Future<void> _save() async {
+    await _file.writeAsString(json.encode(_data));
+  }
 
   @override
   Object? read(String key) => _data[key];
 
   @override
-  Future<void> write(String key, Object? value) async => _data[key] = value;
+  Future<void> write(String key, Object? value) async {
+    _data[key] = value;
+    await _save();
+  }
 
   @override
-  Future<void> delete(String key) async => _data.remove(key);
+  Future<void> delete(String key) async {
+    _data.remove(key);
+    await _save();
+  }
 
   @override
-  Future<void> clear() async => _data.clear();
+  Future<void> clear() async {
+    _data.clear();
+    await _save();
+  }
 }
