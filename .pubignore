@@ -1,0 +1,35 @@
+# Exclude documentation site source
+/docs_site/
+
+# Exclude CI/CD and scripts
+/.github/
+/scripts/
+
+# Exclude coverage reports
+/coverage/
+/coverage_merged/
+
+# Exclude local workspace files
+/ext_notifier.code-workspace
+/melos_neat_state.iml
+/ext_notifier.iml
+/.idea/
+/.dart_tool/
+/.flutter-plugins*
+/pubspec.lock
+
+# Exclude build artifacts (CRITICAL for package size)
+/build/
+*.dill
+*.cache
+
+# Exclude melos config
+/melos.yaml
+
+# Keep standard examples, but you might want to exclude specialized ones 
+# if they are too large or better served via the docs site.
+# For now, we'll keep them as they are useful for local development 
+# and users can still see them on GitHub.
+# /example_advanced/
+# /example_hydrated/
+# ...
