@@ -10,7 +10,9 @@ A lightweight, feature-rich state management package for Flutter that builds upo
 - **Extends ValueNotifier**: Leverages the familiar and performant `ValueNotifier` API.
 - **Built-in Async Support**: Easily manage `isLoading`, `error`, and `stackTrace` with the `runTask` method.
 - **Action System**: Emit and listen to one-time actions (e.g., showing a SnackBar or navigation) outside the main state.
-- **Optimized Rebuilds**: `NeatState` provides fine-grained control over widget rebuilds with a `rebuildWhen` callback.
+- **Enhanced Rebuilds**: Uses `InheritedModel` for granular rebuilds via `context.select`.
+- **State Persistence**: Built-in support for hydrated state via `NeatHydratedNotifier`.
+- **Undo/Redo Support**: Easily add history points with `NeatUndoRedoNotifier`.
 - **Dedicated Builders**: Specific builders for `loading` and `error` states to keep your UI code clean.
 
 ## Getting started
@@ -27,67 +29,91 @@ Then run:
 flutter pub get
 ```
 
-## Usage
+### Simple Counter Example
 
-### 1. Define your Notifier
+If you don't need actions or complex state, just use primitives:
 
-Create a class that extends `NeatNotifier`. Define your state and any actions you might need.
+```dart
+class Counter extends NeatNotifier<int, void> {
+  Counter() : super(0);
+  void increment() => value++;
+}
+
+// Usage
+NeatState(
+  create: (_) => Counter(),
+  builder: (context, count, _) => Text('Count: $count'),
+)
+```
+
+### Advanced Usage
+
+For more complex scenarios involving records, async tasks, and actions:
 
 ```dart
 typedef CounterState = ({int count});
 
 sealed class CounterAction {}
-class CounterMilestoneAction extends CounterAction {
+class Milestone extends CounterAction {
   final String message;
-  CounterMilestoneAction(this.message);
+  Milestone(this.message);
 }
 
-class CounterNotifier extends NeatNotifier<CounterState, CounterAction> {
-  CounterNotifier() : super((count: 0));
+class AdvancedCounter extends NeatNotifier<CounterState, CounterAction> {
+  AdvancedCounter() : super((count: 0));
 
   Future<void> increment() => runTask(() async {
     await Future.delayed(const Duration(seconds: 1));
     value = (count: value.count + 1);
     
     if (value.count % 5 == 0) {
-      emitAction(CounterMilestoneAction('Reached ${value.count}!'));
+      emitAction(Milestone('Reached ${value.count}!'));
     }
   });
 }
 ```
 
-### 2. Use NeatState in your UI
-
-You can omit generic parameters when using `create` — Dart will infer everything for you!
-
 ```dart
 NeatState(
-  create: (context) => CounterNotifier(),
-  onAction: (context, CounterAction action) {
-    if (action is CounterMilestoneAction) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(action.message)));
-    }
+  create: (context) => AdvancedCounter(),
+  onAction: (context, action) {
+    if (action is Milestone) /* Show SnackBar */ ...
   },
-  loadingBuilder: (context, NeatLoading loading, child) => Center(
-    child: CircularProgressIndicator(
-      value: loading.progress > 0 ? loading.progress / 100 : null,
-    ),
-  ),
-  errorBuilder: (context, NeatError error, child) => Center(
-    child: Text('Error: ${error.error}'),
-  ),
-  builder: (context, CounterState state, child) {
-    return Column(
-      children: [
-        Text('Count: ${state.count}'),
-        ElevatedButton(
-          onPressed: context.read<CounterNotifier>().increment,
-          child: Text('Increment'),
-        ),
-      ],
-    );
-  },
+  loadingBuilder: (context, loading, _) => CircularProgressIndicator(),
+  builder: (context, state, _) => Text('Count: ${state.count}'),
 )
+```
+
+## Example Gallery
+
+Explore specific capabilities through our dedicated examples:
+
+- 🚀 [**Basic Counter**](example/) - Getting started with simple types.
+- ⏳ [**Async Tasks**](example_runtask/) - Deep-dive into `runTask` and progress management.
+- 📦 [**Multi-State**](example_multistate/) - Using `NeatMultiState` to manage multiple notifiers.
+- 💾 [**Hydrated State**](example_hydrated/) - Easy persistence using `NeatHydratedNotifier`.
+- 🔄 [**Undo/Redo**](example_undoredo/) - Adding history support with `NeatUndoRedoNotifier`.
+- 🛠️ [**Advanced Patterns**](example_advanced/) - Selectors, Observers, and custom storage.
+
+## Context Extensions
+
+`neat_state` provides convenient extension methods on `BuildContext` for easy access to your notifiers:
+
+- **`context.read<V>()`**: Gets the notifier without listening. Best for calling methods (e.g., in `onPressed`).
+- **`context.watch<V>()`**: Gets the notifier and listens for any changes.
+- **`context.select<V, S, R>((state) => ...)`**: Listens only to a specific part of the state.
+
+```dart
+// 1. Just call a method
+onPressed: () => context.read<CounterNotifier>().increment(),
+
+// 2. Rebuild whenever anything changes
+final count = context.watch<CounterNotifier>().value;
+
+// 3. Rebuild ONLY when a specific field changes
+final userName = context.select<UserNotifier, UserState, String>(
+  (state) => state.name,
+);
 ```
 
 ## Features Deep Dive
