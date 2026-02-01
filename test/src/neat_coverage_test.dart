@@ -7,116 +7,113 @@ class CoverageNotifier extends NeatNotifier<int, String> {
 }
 
 void main() {
-  testWidgets(
-    'GIVEN: No NeatState in tree WHEN: NeatState.of is called THEN: it throws FlutterError',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(const SizedBox());
+  testWidgets('GIVEN: No NeatState in tree, '
+      'WHEN: NeatState.of is called, '
+      'THEN: it throws FlutterError', (WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox());
 
-      expect(
-        () => NeatState.of<CoverageNotifier>(
-          tester.element(find.byType(SizedBox)),
+    expect(
+      () =>
+          NeatState.of<CoverageNotifier>(tester.element(find.byType(SizedBox))),
+      throwsA(
+        isA<FlutterError>().having(
+          (e) => e.message,
+          'message',
+          contains('NeatState.of() called with a context'),
         ),
-        throwsA(
-          isA<FlutterError>().having(
-            (e) => e.message,
-            'message',
-            contains('NeatState.of() called with a context'),
+      ),
+    );
+  });
+
+  testWidgets('GIVEN: NeatState exists, '
+      'WHEN: context.read is called, '
+      'THEN: it returns the notifier without listening', (
+    WidgetTester tester,
+  ) async {
+    final notifier = CoverageNotifier();
+    int buildCount = 0;
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: NeatState<CoverageNotifier, int, String>(
+          create: (_) => notifier,
+          child: Builder(
+            builder: (context) {
+              buildCount++;
+              final n = context.read<CoverageNotifier>();
+              return Text('Count: ${n.value}');
+            },
           ),
         ),
-      );
-    },
-  );
+      ),
+    );
 
-  testWidgets(
-    'GIVEN: NeatState exists WHEN: context.read is called THEN: it returns the notifier without listening',
-    (WidgetTester tester) async {
-      final notifier = CoverageNotifier();
-      int buildCount = 0;
+    expect(buildCount, 1);
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
+    notifier.value = 1;
+    await tester.pump();
+
+    expect(
+      buildCount,
+      1,
+    ); // Should NOT rebuild because context.read doesn't listen
+  });
+
+  testWidgets('GIVEN: NeatState exists, '
+      'WHEN: context.watch is called, '
+      'THEN: it returns the notifier and listens', (WidgetTester tester) async {
+    final notifier = CoverageNotifier();
+    int buildCount = 0;
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: NeatState<CoverageNotifier, int, String>(
+          create: (_) => notifier,
+          child: Builder(
+            builder: (context) {
+              buildCount++;
+              final n = context.watch<CoverageNotifier>();
+              return Text('Count: ${n.value}');
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(buildCount, 1);
+
+    notifier.value = 1;
+    await tester.pump();
+
+    expect(buildCount, 2); // Should rebuild
+  });
+
+  testWidgets('GIVEN: NeatState is used as a Consumer (no create), '
+      'WHEN: dependencies change, '
+      'THEN: it initializes from ancestor', (WidgetTester tester) async {
+    final notifier = CoverageNotifier();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: NeatState<CoverageNotifier, int, String>(
+          create: (_) => notifier,
           child: NeatState<CoverageNotifier, int, String>(
-            create: (_) => notifier,
-            child: Builder(
-              builder: (context) {
-                buildCount++;
-                final n = context.read<CoverageNotifier>();
-                return Text('Count: ${n.value}');
-              },
-            ),
+            builder: (context, state, child) {
+              return Text('Nested Count: $state');
+            },
           ),
         ),
-      );
+      ),
+    );
 
-      expect(buildCount, 1);
+    expect(find.text('Nested Count: 0'), findsOneWidget);
 
-      notifier.value = 1;
-      await tester.pump();
+    notifier.value = 1;
+    await tester.pump();
 
-      expect(
-        buildCount,
-        1,
-      ); // Should NOT rebuild because context.read doesn't listen
-    },
-  );
-
-  testWidgets(
-    'GIVEN: NeatState exists WHEN: context.watch is called THEN: it returns the notifier and listens',
-    (WidgetTester tester) async {
-      final notifier = CoverageNotifier();
-      int buildCount = 0;
-
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: NeatState<CoverageNotifier, int, String>(
-            create: (_) => notifier,
-            child: Builder(
-              builder: (context) {
-                buildCount++;
-                final n = context.watch<CoverageNotifier>();
-                return Text('Count: ${n.value}');
-              },
-            ),
-          ),
-        ),
-      );
-
-      expect(buildCount, 1);
-
-      notifier.value = 1;
-      await tester.pump();
-
-      expect(buildCount, 2); // Should rebuild
-    },
-  );
-
-  testWidgets(
-    'GIVEN: NeatState is used as a Consumer (no create) WHEN: dependencies change THEN: it initializes from ancestor',
-    (WidgetTester tester) async {
-      final notifier = CoverageNotifier();
-
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: NeatState<CoverageNotifier, int, String>(
-            create: (_) => notifier,
-            child: NeatState<CoverageNotifier, int, String>(
-              builder: (context, state, child) {
-                return Text('Nested Count: $state');
-              },
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Nested Count: 0'), findsOneWidget);
-
-      notifier.value = 1;
-      await tester.pump();
-
-      expect(find.text('Nested Count: 1'), findsOneWidget);
-    },
-  );
+    expect(find.text('Nested Count: 1'), findsOneWidget);
+  });
 }

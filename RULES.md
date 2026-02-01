@@ -25,10 +25,9 @@ This project is a minimalistic state management package for Flutter.
     - **Atomic Tests**: Test only one aspect of the code at a time. Do not chain multiple WHEN/THEN clauses in one test.
     - **Formatting**: Use the specific string template with triple quotes:
       ```dart
-      testWidgets(
-        '''GIVEN: [state]
-        WHEN: [action]
-        THEN: [result]''',
+      testWidgets('GIVEN: [state], '
+        'WHEN: [action], '
+        'THEN: [result]',
         ...
       );
       ```
