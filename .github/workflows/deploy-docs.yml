@@ -30,10 +30,7 @@ jobs:
       - name: Sync Gists
         env:
           GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
-          COUNTER_GIST_ID: ${{ secrets.COUNTER_GIST_ID }}
-          HYDRATED_GIST_ID: ${{ secrets.HYDRATED_GIST_ID }}
-          UNDOREDO_GIST_ID: ${{ secrets.UNDOREDO_GIST_ID }}
-        run: node scripts/sync_gists.js
+        run: bash scripts/sync_gists.sh
 
       - name: Build site
         working-directory: docs_site
