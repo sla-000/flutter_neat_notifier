@@ -12,6 +12,13 @@ scripts:
   test:
     exec: fvm flutter test
     description: Run tests in all packages.
+  
+  coverage:
+    run: melos exec --fail-fast -- "fvm flutter test --coverage"
+    description: Run tests with coverage in all packages.
+    packageFilters:
+      flutter: true
+      dirExists: test
   # clean:
   #   exec: flutter clean
   #   packageFilters:
