@@ -36,3 +36,7 @@ This project is a minimalistic state management package for Flutter.
 6.  **Tooling & Workflow**
     - **Prefer MCP Tools**: Always use `dart-mcp-server` tools (e.g., `analyze_files`, `run_test`, `dart_format`) instead of direct console commands for project operations.
     - **Dart Tooling Daemon (DTD)**: Connect to DTD whenever available to leverage advanced AI capabilities like widget tree inspection and real-time runtime error analysis.
+
+7.  **Test Coverage**
+    - All code must be covered by tests.
+    - Aim for 100% test coverage (or close to it if technically impossible).
