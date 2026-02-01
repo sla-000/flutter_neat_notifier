@@ -18,7 +18,7 @@ A lightweight, feature-rich state management package for Flutter that builds upo
 
 ## Documentation
 
-For detailed guides and interactive examples, visit our [documentation site](https://sla-000.github.io/neat_state/).
+For detailed guides and interactive examples, visit our [documentation site](https://sla-000.github.io/flutter_neat_notifier/).
 
 ## Getting started
 

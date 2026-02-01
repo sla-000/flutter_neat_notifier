@@ -28,7 +28,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'sla-000',
-  projectName: 'neat_state',
+  projectName: 'flutter_neat_notifier',
 
   onBrokenLinks: 'throw',
 
@@ -47,7 +47,7 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
-          editUrl: 'https://github.com/sla-000/neat_state/tree/main/docs_site/',
+          editUrl: 'https://github.com/sla-000/flutter_neat_notifier/tree/main/docs_site/',
         },
         blog: false,
         theme: {
@@ -102,7 +102,7 @@ const config = {
             items: [
               {
                 label: 'Discussions',
-                href: 'https://github.com/sla-000/neat_state/discussions',
+                href: 'https://github.com/sla-000/flutter_neat_notifier/discussions',
               },
             ],
           },
@@ -111,7 +111,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/sla-000/neat_state',
+                href: 'https://github.com/sla-000/flutter_neat_notifier',
               },
             ],
           },
