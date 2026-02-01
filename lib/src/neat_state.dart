@@ -59,10 +59,8 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
   /// Optional callback called when a one-time action is emitted.
   final void Function(BuildContext context, A action)? onAction;
 
-  /// Optional static child widget that is passed to the builders.
+  /// The widget below this widget in the tree.
   final Widget? child;
-
-  // ... inside NeatState class ...
 
   /// Finds the nearest [NeatNotifier] of type [V] in the widget tree.
   ///
@@ -103,6 +101,20 @@ class NeatState<V extends NeatNotifier<S, A>, S, A> extends StatefulWidget {
 
   @override
   State<NeatState<V, S, A>> createState() => _NeatState<V, S, A>();
+
+  /// Creates a copy of this [NeatState] but with the given fields replaced with the new values.
+  NeatState<V, S, A> copyWith({Widget? child}) {
+    return NeatState<V, S, A>(
+      key: key,
+      create: create,
+      builder: builder,
+      rebuildWhen: rebuildWhen,
+      errorBuilder: errorBuilder,
+      loadingBuilder: loadingBuilder,
+      onAction: onAction,
+      child: child ?? this.child,
+    );
+  }
 }
 
 class _NeatState<V extends NeatNotifier<S, A>, S, A>

@@ -26,7 +26,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     // 3. Use NeatMultiState to provide multiple notifiers
     return NeatMultiState(
-      createList: [(_) => ThemeNotifier(), (_) => CounterNotifier()],
+      independent: [(_) => ThemeNotifier(), (_) => CounterNotifier()],
       child: Builder(
         builder: (context) {
           // 4. Listen to the theme state

@@ -1,20 +1,30 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'neat_notifier.dart';
+import 'neat_state.dart';
 
 /// A widget that provides multiple [NeatNotifier]s to its descendants.
 ///
 /// This avoids the "pyramid of doom" when nesting multiple providers.
-/// Notifiers declared here are siblings and cannot depend on each other during initialization.
+///
+/// [independent]: A list of functions that create notifiers. These notifiers cannot depend on each other.
+/// [codependent]: A list of builders that will be nested. These CAN depend on notifiers in [independent] or previous items in [codependent].
 class NeatMultiState extends StatefulWidget {
   const NeatMultiState({
-    required this.createList,
     required this.child,
+    this.independent = const [],
+    this.codependent = const [],
     super.key,
   });
 
-  /// A list of functions that create [NeatNotifier]s.
-  final List<NeatNotifier Function(BuildContext context)> createList;
+  /// Notifiers that do not depend on each other or context.
+  final List<NeatNotifier Function(BuildContext context)> independent;
+
+  /// [NeatState] widgets that are chained together.
+  /// Allows subsequent notifiers to depend on previous ones.
+  ///
+  /// Each item is a builder that takes a child and returns a widget (usually [NeatState]).
+  final List<Widget Function(Widget child)> codependent;
 
   final Widget child;
 
@@ -30,7 +40,7 @@ class _NeatMultiStateState extends State<NeatMultiState> {
   @override
   void initState() {
     super.initState();
-    for (final create in widget.createList) {
+    for (final create in widget.independent) {
       final notifier = create(context);
       _notifiers[notifier.runtimeType] = notifier;
       _values[notifier.runtimeType] = notifier.value;
@@ -60,10 +70,19 @@ class _NeatMultiStateState extends State<NeatMultiState> {
 
   @override
   Widget build(BuildContext context) {
+    // 1. Prepare independent providers (part of final build)
+
+    // 2. Wrap codependent widgets (in reverse order)
+    Widget chainedChild = widget.child;
+
+    for (final builder in widget.codependent.reversed) {
+      chainedChild = builder(chainedChild);
+    }
+
     return NeatMultiInheritedProvider(
       notifiers: _notifiers,
       values: Map.of(_values),
-      child: widget.child,
+      child: chainedChild,
     );
   }
 }
@@ -81,12 +100,6 @@ class NeatMultiInheritedProvider extends InheritedModel<Type> {
 
   @override
   bool updateShouldNotify(NeatMultiInheritedProvider oldWidget) {
-    // If values map changed, we definitely need to define dependent updates
-    // But since we mutate the map content in setState (which is okay for InheritedModel logic check usually, but here we replace values map in build?)
-    // Actually, in build we pass reference. _values is mutated.
-    // Wait, modifying _values in place and passing it again means oldWidget.values is same object.
-    // FIX: create new map in build or handle change detection properly.
-    // For simplicity heavily relying on updateShouldNotifyDependent.
     return true;
   }
 

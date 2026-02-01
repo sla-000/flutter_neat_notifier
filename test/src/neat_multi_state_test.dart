@@ -22,7 +22,7 @@ void main() {
   testWidgets('NeatMultiState provides multiple notifiers', (tester) async {
     await tester.pumpWidget(
       NeatMultiState(
-        createList: [(_) => TestNotifier(10), (_) => AnotherNotifier('hello')],
+        independent: [(_) => TestNotifier(10), (_) => AnotherNotifier('hello')],
         child: Builder(
           builder: (context) {
             final testVal = context.select<TestNotifier, int, int>((s) => s);
@@ -56,7 +56,7 @@ void main() {
   testWidgets('NeatMultiState works alongside NeatState', (tester) async {
     await tester.pumpWidget(
       NeatMultiState(
-        createList: [(_) => TestNotifier(10)],
+        independent: [(_) => TestNotifier(10)],
         child: NeatState(
           create: (_) => AnotherNotifier('nested'),
           child: Builder(
@@ -82,7 +82,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       NeatMultiState(
-        createList: [(_) => TestNotifier(10)],
+        independent: [(_) => TestNotifier(10)],
         child: Builder(
           builder: (context) {
             // Trying to read a notifier that wasn't provided
@@ -105,13 +105,31 @@ void main() {
     );
   });
 
-  testWidgets(
-    'Actions are not intercepted by NeatMultiState (no onAction callback)',
-    (tester) async {
-      // NeatMultiState doesn't support onAction for individual notifiers in the list yet.
-      // This test documents current behavior.
+  testWidgets('NeatMultiState supports codependent notifiers', (tester) async {
+    await tester.pumpWidget(
+      NeatMultiState(
+        independent: [(_) => TestNotifier(10)],
+        codependent: [
+          (child) => NeatState(
+            create: (_) => AnotherNotifier('chained'),
+            child: child,
+          ),
+        ],
+        child: Builder(
+          builder: (context) {
+            final testVal = context.select<TestNotifier, int, int>((s) => s);
+            final anotherVal = context.select<AnotherNotifier, String, String>(
+              (s) => s,
+            );
+            return Text(
+              'Combined: $testVal $anotherVal',
+              textDirection: TextDirection.ltr,
+            );
+          },
+        ),
+      ),
+    );
 
-      // This is a trade-off: if you need onAction, wrap individual notifiers in NeatState.
-    },
-  );
+    expect(find.text('Combined: 10 chained'), findsOneWidget);
+  });
 }
