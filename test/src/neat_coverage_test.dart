@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:neat_notifier/neat_notifier.dart';
 
-class CoverageNotifier extends NeatNotifier<int, String> {
-  CoverageNotifier() : super(0);
+class TestNotifier extends NeatNotifier<int, String> {
+  TestNotifier() : super(0);
 }
 
 void main() {
@@ -13,8 +13,7 @@ void main() {
     await tester.pumpWidget(const SizedBox());
 
     expect(
-      () =>
-          NeatState.of<CoverageNotifier>(tester.element(find.byType(SizedBox))),
+      () => NeatState.of<TestNotifier>(tester.element(find.byType(SizedBox))),
       throwsA(
         isA<FlutterError>().having(
           (e) => e.message,
@@ -30,18 +29,18 @@ void main() {
       'THEN: it returns the notifier without listening', (
     WidgetTester tester,
   ) async {
-    final notifier = CoverageNotifier();
+    final notifier = TestNotifier();
     int buildCount = 0;
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: NeatState<CoverageNotifier, int, String>(
+        child: NeatState<TestNotifier, int, String>(
           create: (_) => notifier,
           child: Builder(
             builder: (context) {
               buildCount++;
-              final n = context.read<CoverageNotifier>();
+              final n = context.read<TestNotifier>();
               return Text('Count: ${n.value}');
             },
           ),
@@ -63,18 +62,18 @@ void main() {
   testWidgets('GIVEN: NeatState exists, '
       'WHEN: context.watch is called, '
       'THEN: it returns the notifier and listens', (WidgetTester tester) async {
-    final notifier = CoverageNotifier();
+    final notifier = TestNotifier();
     int buildCount = 0;
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: NeatState<CoverageNotifier, int, String>(
+        child: NeatState<TestNotifier, int, String>(
           create: (_) => notifier,
           child: Builder(
             builder: (context) {
               buildCount++;
-              final n = context.watch<CoverageNotifier>();
+              final n = context.watch<TestNotifier>();
               return Text('Count: ${n.value}');
             },
           ),
@@ -93,14 +92,14 @@ void main() {
   testWidgets('GIVEN: NeatState is used as a Consumer (no create), '
       'WHEN: dependencies change, '
       'THEN: it initializes from ancestor', (WidgetTester tester) async {
-    final notifier = CoverageNotifier();
+    final notifier = TestNotifier();
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: NeatState<CoverageNotifier, int, String>(
+        child: NeatState<TestNotifier, int, String>(
           create: (_) => notifier,
-          child: NeatState<CoverageNotifier, int, String>(
+          child: NeatState<TestNotifier, int, String>(
             builder: (context, state, child) {
               return Text('Nested Count: $state');
             },
