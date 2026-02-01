@@ -1,0 +1,18 @@
+name: neat_state
+packages:
+  - ./
+  - example/
+  - example_advanced/
+  - example_hydrated/
+  - example_multistate/
+  - example_runtask/
+  - example_undoredo/
+
+scripts:
+  test:
+    exec: fvm flutter test
+    description: Run tests in all packages.
+  # clean:
+  #   exec: flutter clean
+  #   packageFilters:
+  #     flutter: true
