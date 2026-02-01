@@ -2,9 +2,12 @@ import 'package:neat_notifier/neat_notifier.dart';
 import 'package:flutter/material.dart';
 
 import 'counter_notifier.dart';
-import 'settings_notifier.dart';
+import 'theme_notifier.dart';
+import 'simple_storage.dart';
 
 void main() {
+  // 1. Initialize storage before using hydrated notifiers
+  NeatHydratedStorage.initialize(SimpleStorage());
   runApp(const App());
 }
 
@@ -13,16 +16,16 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Acts as a Provider for the whole app
+    // 2. Hydrated Notifier handles persistence automatically
     return NeatState(
-      create: (context) => SettingsNotifier(),
-      builder: (context, SettingsState state, child) {
+      create: (context) => ThemeNotifier(),
+      builder: (context, bool isDarkMode, child) {
         return MaterialApp(
           title: 'NeatState Example',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple,
-              brightness: state.isDarkMode ? Brightness.dark : Brightness.light,
+              brightness: isDarkMode ? Brightness.dark : Brightness.light,
             ),
             useMaterial3: true,
           ),
@@ -53,13 +56,10 @@ class MyHomePage extends StatelessWidget {
             // 3. Simple Consumer using context.watch
             Builder(
               builder: (context) {
-                final isDarkMode = context
-                    .select<SettingsNotifier, SettingsState, bool>(
-                      (s) => s.isDarkMode,
-                    );
+                final isDarkMode = context.watch<ThemeNotifier>().value;
                 return IconButton(
                   icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
-                  onPressed: context.read<SettingsNotifier>().toggleDarkMode,
+                  onPressed: context.read<ThemeNotifier>().toggle,
                 );
               },
             ),

@@ -4,10 +4,6 @@ This file tracks planned features and improvements for `NeatState`. Items will b
 
 ## Planned Features
 
-- [ ] **Built-in Persistence (Hydrated State)**
-  - Provide a mixin or interface to automatically persist state to local storage.
-  - Simplified JSON serialization/deserialization logic.
-
 - [ ] **Action Middleware / Interceptors**
   - Add support for global or local interceptors to log, transform, or debounce actions.
   - Useful for analytics and debugging.
@@ -17,6 +13,11 @@ This file tracks planned features and improvements for `NeatState`. Items will b
   - Useful for editors and complex forms.
 
 ## Completed Features
+
+- [x] **Built-in Persistence (Hydrated State)**
+  - Mixin-based approach for optional persistence.
+  - usage: `class MyNotifier extends NeatNotifier with NeatHydratedNotifier`
+  - requires `NeatHydratedStorage.initialize()` before use.
 
 - [x] **Functional Selectors (`context.select`)**
   - Granular rebuilds using `InheritedModel`.
