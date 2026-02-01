@@ -19,6 +19,9 @@ const sidebars = {
     'intro',
     'hydrated',
     'undoredo',
+    'async_operations',
+    'multi_state',
+    'context_extensions',
   ],
 };
 

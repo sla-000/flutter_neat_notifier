@@ -29,4 +29,8 @@ Here is a simple counter example working live.
 
 - [Installation](./intro.md#installation)
 - [Simple Example](./intro.md#simple-example)
-- [Hydrated Notifiers](./intro.md#hydrated-state)
+- [Hydrated Notifiers](hydrated.md)
+- [Undo/Redo](undoredo.md)
+- [Async Operations](async_operations.md)
+- [Multi-State Management](multi_state.md)
+- [Context Extensions](context_extensions.md)

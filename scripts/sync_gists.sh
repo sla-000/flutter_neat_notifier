@@ -4,6 +4,9 @@
 COUNTER_ID="3a160a928c3c9ad0ff86292feabd3b5d"
 HYDRATED_ID="9399b7b0b55520dfd79de5a306ae97b8"
 UNDOREDO_ID="70970fba69ad18d50c58a2f5dc2a0ca3"
+ASYNC_OPERATIONS_ID="" # TODO: Add Gist ID
+MULTI_STATE_ID="" # TODO: Add Gist ID
+CONTEXT_EXTENSIONS_ID="" # TODO: Add Gist ID
 
 # Check for Gist Token
 if [ -z "$GIST_TOKEN" ]; then
@@ -47,3 +50,6 @@ update_gist() {
 update_gist "counter" "$COUNTER_ID"
 update_gist "hydrated" "$HYDRATED_ID"
 update_gist "undoredo" "$UNDOREDO_ID"
+update_gist "async_operations" "$ASYNC_OPERATIONS_ID"
+update_gist "multi_state" "$MULTI_STATE_ID"
+update_gist "context_extensions" "$CONTEXT_EXTENSIONS_ID"
