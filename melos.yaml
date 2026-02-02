@@ -14,11 +14,10 @@ scripts:
     description: Run tests in all packages.
   
   coverage:
-    run: melos exec --fail-fast -- "flutter test --coverage"
-    description: Run tests with coverage in all packages.
-    packageFilters:
-      flutter: true
-      dirExists: test
+    run: |
+      melos exec --fail-fast -- "flutter test --coverage"
+      ./scripts/merge_coverage.sh
+    description: Run tests with coverage in all packages and merge results.
   # clean:
   #   exec: flutter clean
   #   packageFilters:

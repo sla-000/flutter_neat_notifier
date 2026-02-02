@@ -31,3 +31,4 @@ migrate_working_dir/
 /coverage/
 example_advanced/neat_storage.json
 coverage_merged/lcov.info
+coverage_merged/summary.txt

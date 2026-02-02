@@ -25,4 +25,15 @@ echo "Coverage files merged successfully!"
 echo "Merged coverage file: coverage_merged/lcov.info"
 
 # Display coverage summary
-lcov --summary coverage_merged/lcov.info
+echo "Calculating detailed summary..."
+lcov --summary coverage_merged/lcov.info | tee coverage_merged/summary.txt
+
+# Extract and print total percentage
+# Example line: "  lines......: 92.5% (123 of 133 lines)"
+TOTAL_PERCENT=$(grep "lines" coverage_merged/summary.txt | grep -oE "[0-9]+(\.[0-9]+)?%")
+
+echo ""
+echo "======================================================="
+echo "  TOTAL PROJECT COVERAGE: $TOTAL_PERCENT"
+echo "======================================================="
+echo ""
