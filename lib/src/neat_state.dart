@@ -269,13 +269,31 @@ extension NeatContextExtensions on BuildContext {
 
   /// Listens to a specific part of the state of the nearest [NeatNotifier] of type [V].
   ///
-  /// [V] is the Notifier type.
-  /// [S] is the State type of the notifier.
-  /// [R] is the return type of the selector.
-  R select<V extends NeatNotifier<S, dynamic>, S, R>(
-    R Function(S state) selector,
-  ) {
-    final notifier = NeatState.of<V>(this, listen: true, aspect: selector);
+  /// This uses a 2-step process to allow for better type inference:
+  /// `context.select<MyNotifier>()((state) => state.part)`
+  NeatSelector<V> select<V extends NeatNotifier<dynamic, dynamic>>() {
+    return NeatSelector<V>(this);
+  }
+}
+
+/// A proxy object that enables better type ergonomics for `context.select`.
+class NeatSelector<V extends NeatNotifier<dynamic, dynamic>> {
+  /// Internal constructor.
+  const NeatSelector(this.context);
+
+  /// The build context used for selection.
+  final BuildContext context;
+}
+
+/// Extension on [NeatSelector] to provide the selection logic with proper inference.
+extension NeatSelectorX<V extends NeatNotifier<S, dynamic>, S>
+    on NeatSelector<V> {
+  /// Listens to a specific part of the state.
+  ///
+  /// [S] is automatically inferred from [V].
+  /// [R] is automatically inferred from the return type of the [selector].
+  R call<R>(R Function(S state) selector) {
+    final notifier = NeatState.of<V>(context, listen: true, aspect: selector);
     return selector(notifier.value);
   }
 }

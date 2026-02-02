@@ -28,9 +28,7 @@ class HydratedApp extends StatelessWidget {
       child: Builder(
         builder: (context) {
           // 4. Listen to theme state for dynamic styling
-          final isDarkMode = context.select<ThemeNotifier, bool, bool>(
-            (state) => state,
-          );
+          final isDarkMode = context.select<ThemeNotifier>()((state) => state);
 
           return MaterialApp(
             title: 'Neat Hydrated Example',

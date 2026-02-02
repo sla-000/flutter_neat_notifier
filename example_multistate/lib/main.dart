@@ -107,8 +107,8 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Using select for granular rebuilds
-    final name = context.select<UserNotifier, User, String>((u) => u.name);
-    final age = context.select<UserNotifier, User, int>((u) => u.age);
+    final name = context.select<UserNotifier>()((u) => u.name);
+    final age = context.select<UserNotifier>()((u) => u.age);
 
     return Card(
       child: Padding(

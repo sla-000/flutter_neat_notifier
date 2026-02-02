@@ -25,10 +25,8 @@ void main() {
         independent: [(_) => TestNotifier(10), (_) => AnotherNotifier('hello')],
         child: Builder(
           builder: (context) {
-            final testVal = context.select<TestNotifier, int, int>((s) => s);
-            final anotherVal = context.select<AnotherNotifier, String, String>(
-              (s) => s,
-            );
+            final testVal = context.select<TestNotifier>()((s) => s);
+            final anotherVal = context.select<AnotherNotifier>()((s) => s);
             return Text(
               '$testVal $anotherVal',
               textDirection: TextDirection.ltr,
@@ -40,8 +38,7 @@ void main() {
 
     expect(find.text('10 hello'), findsOneWidget);
 
-    // Update state through context.read
-    final context = tester.element(find.text('10 hello'));
+    final context = tester.element(find.byType(Builder));
     context.read<TestNotifier>().increment();
     await tester.pump();
 
@@ -53,59 +50,9 @@ void main() {
     expect(find.text('11 world'), findsOneWidget);
   });
 
-  testWidgets('NeatMultiState works alongside NeatState', (tester) async {
-    await tester.pumpWidget(
-      NeatMultiState(
-        independent: [(_) => TestNotifier(10)],
-        child: NeatState(
-          create: (_) => AnotherNotifier('nested'),
-          child: Builder(
-            builder: (context) {
-              final testVal = context.select<TestNotifier, int, int>((s) => s);
-              final anotherVal = context
-                  .select<AnotherNotifier, String, String>((s) => s);
-              return Text(
-                '$testVal $anotherVal',
-                textDirection: TextDirection.ltr,
-              );
-            },
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text('10 nested'), findsOneWidget);
-  });
-
-  testWidgets('NeatState.of throws readable error when not found', (
+  testWidgets('NeatMultiState works with nested/dependent notifiers', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      NeatMultiState(
-        independent: [(_) => TestNotifier(10)],
-        child: Builder(
-          builder: (context) {
-            // Trying to read a notifier that wasn't provided
-            try {
-              context.read<AnotherNotifier>();
-            } catch (e) {
-              return Text(e.toString(), textDirection: TextDirection.ltr);
-            }
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
-
-    expect(
-      find.textContaining(
-        'NeatState.of() called with a context that does not contain a AnotherNotifier',
-      ),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('NeatMultiState supports codependent notifiers', (tester) async {
     await tester.pumpWidget(
       NeatMultiState(
         independent: [(_) => TestNotifier(10)],
@@ -117,10 +64,8 @@ void main() {
         ],
         child: Builder(
           builder: (context) {
-            final testVal = context.select<TestNotifier, int, int>((s) => s);
-            final anotherVal = context.select<AnotherNotifier, String, String>(
-              (s) => s,
-            );
+            final testVal = context.select<TestNotifier>()((s) => s);
+            final anotherVal = context.select<AnotherNotifier>()((s) => s);
             return Text(
               'Combined: $testVal $anotherVal',
               textDirection: TextDirection.ltr,

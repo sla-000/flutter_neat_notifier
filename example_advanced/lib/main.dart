@@ -30,9 +30,7 @@ class App extends StatelessWidget {
       child: Builder(
         builder: (context) {
           // 4. Listen to the theme state
-          final isDarkMode = context.select<ThemeNotifier, bool, bool>(
-            (state) => state,
-          );
+          final isDarkMode = context.select<ThemeNotifier>()((state) => state);
 
           return MaterialApp(
             title: 'NeatState Example',
@@ -189,9 +187,7 @@ class CounterActions extends StatelessWidget {
 
     // We can select specific properties to listen to,
     // but here we just want to know if it's loading to disable button
-    final isLoading = context.select<CounterNotifier, CounterState, bool>(
-      (s) => notifier.isLoading,
-    );
+    final isLoading = context.watch<CounterNotifier>().isLoading;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

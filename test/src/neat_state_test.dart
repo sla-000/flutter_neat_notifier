@@ -331,9 +331,7 @@ void main() {
             child: Builder(
               builder: (context) {
                 buildCount++;
-                final count1 = context.select<TestNotifier, TestState, int>(
-                  (s) => s.count1,
-                );
+                final count1 = context.select<TestNotifier>()((s) => s.count1);
                 return Text('Count1: $count1');
               },
             ),
@@ -365,9 +363,7 @@ void main() {
             child: Builder(
               builder: (context) {
                 buildCount++;
-                final count1 = context.select<TestNotifier, TestState, int>(
-                  (s) => s.count1,
-                );
+                final count1 = context.select<TestNotifier>()((s) => s.count1);
                 return Text('Count1: $count1');
               },
             ),
@@ -402,18 +398,14 @@ void main() {
                 Builder(
                   builder: (context) {
                     buildCount1++;
-                    final c = context.select<TestNotifier, TestState, int>(
-                      (s) => s.count1,
-                    );
+                    final c = context.select<TestNotifier>()((s) => s.count1);
                     return Text('C1: $c');
                   },
                 ),
                 Builder(
                   builder: (context) {
                     buildCount2++;
-                    final c = context.select<TestNotifier, TestState, int>(
-                      (s) => s.count2,
-                    );
+                    final c = context.select<TestNotifier>()((s) => s.count2);
                     return Text('C2: $c');
                   },
                 ),
