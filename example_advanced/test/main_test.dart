@@ -26,19 +26,18 @@ void main() {
     expect(find.text('0'), findsNWidgets(2));
   });
 
-  testWidgets('GIVEN: The App is running without optimization, '
+  testWidgets('GIVEN: The App is running with rebuild optimization, '
       'WHEN: Counter 3 is incremented, '
-      'THEN: UI updates', (WidgetTester tester) async {
+      'THEN: UI remains unchanged', (WidgetTester tester) async {
     await tester.pumpWidget(const App());
 
     final btn3 = find.widgetWithText(FloatingActionButton, '3');
     await tester.tap(btn3);
     await tester.pump();
 
-    // Counter 3 state changes. Optimisation check relaxed for now.
-    // '1' is found in the counter display AND the FAB label (btn1)
-    expect(find.text('0'), findsNWidgets(2));
-    expect(find.text('1'), findsNWidgets(2));
+    // Optimization: UI should NOT rebuild for counter3, so values remain '0'
+    expect(find.text('0'), findsNWidgets(3));
+    expect(find.text('1'), findsOneWidget); // Only FAB 1
   });
 
   testWidgets('GIVEN: The App is running, '
