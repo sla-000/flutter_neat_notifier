@@ -127,7 +127,3 @@ final userName = context.select<UserNotifier, UserState, String>(
 - **Structured Errors**: `NeatError` record groups `error` and `stackTrace`.
 - **Direct State Access**: Builders receive the state/data directly for cleaner code.
 - **Smart Inference**: Zero-parameter shorthand for `NeatState`.
-
-## Additional information
-
-For a detailed look at the core principles and architectural constraints of this project, please refer to the [RULES.md](RULES.md) file.

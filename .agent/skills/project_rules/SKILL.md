@@ -1,4 +1,9 @@
-# AI Project Rules
+---
+name: project_rules
+description: Core principles and coding standards for the ext_notifier project.
+---
+
+# Project rules for ext_notifier
 
 This project is a minimalistic state management package for Flutter.
 
@@ -41,8 +46,7 @@ This project is a minimalistic state management package for Flutter.
     - All code must be covered by tests.
     - Aim for 100% test coverage (or close to it if technically impossible).
     - **Coverage Workflow**:
-      - Run tests with coverage: `melos run coverage --no-select`
-      - Merge coverage files: `./scripts/merge_coverage.sh`
+      - Run tests and merge coverage: `melos run coverage`
       - View merged coverage: `genhtml coverage_merged/lcov.info -o coverage_merged/html && open coverage_merged/html/index.html`
     - **What to Test**: Test all business logic, including code in `main.dart` files. Only skip untestable framework entry points like `void main() { runApp(...); }`.
 
