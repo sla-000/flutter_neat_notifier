@@ -26,14 +26,59 @@ class SettingsNotifier extends NeatNotifier<ThemeMode, void> with NeatHydratedNo
 }
 ```
 
-## Live Example
+## Example
 
-Try toggling the theme and refreshing the page (simulated via the "Run" button in DartPad).
+```dart
+import 'package:flutter/material.dart';
+import 'package:neat_state/neat_state.dart';
 
-<iframe
-  src="https://dartpad.dev/embed-flutter.html?id=9399b7b0b55520dfd79de5a306ae97b8"
-  style={{width: '100%', height: '500px', border: 'none'}}
-></iframe>
+class SettingsNotifier extends NeatNotifier<ThemeMode, void>
+    with NeatHydratedNotifier<ThemeMode, void> {
+  SettingsNotifier() : super(ThemeMode.system) {
+    hydrate();
+  }
+  @override
+  String get id => 'settings';
+  void toggle() =>
+      value = value == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  @override
+  ThemeMode? fromJson(Map<String, dynamic> json) =>
+      ThemeMode.values[json['theme'] as int];
+  @override
+  Map<String, dynamic> toJson(ThemeMode state) => {'theme': state.index};
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NeatHydratedStorage.initialize(); // Uses default Hive storage
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return NeatState(
+      create: (_) => SettingsNotifier(),
+      builder: (context, mode, _) {
+        return MaterialApp(
+          themeMode: mode,
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          home: Scaffold(
+            appBar: AppBar(title: const Text('Hydrated State Demo')),
+            body: Center(child: Text('Current Mode: $mode')),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => context.read<SettingsNotifier>().toggle(),
+              child: const Icon(Icons.brightness_4),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+```
 
 :::tip
 In a real application, you would use a persistent storage like `shared_preferences` or `hive`. See the [Advanced Patterns](https://github.com/sla-000/flutter_neat_notifier/tree/main/example_advanced) folder for a storage implementation using `path_provider`.

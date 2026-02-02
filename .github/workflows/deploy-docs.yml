@@ -27,11 +27,6 @@ jobs:
         working-directory: docs_site
         run: npm install
 
-      - name: Sync Gists
-        env:
-          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
-        run: bash scripts/sync_gists.sh
-
       - name: Build site
         working-directory: docs_site
         run: npm run build

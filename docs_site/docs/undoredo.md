@@ -21,11 +21,77 @@ class DrawingNotifier extends NeatNotifier<List<Offset>, void> with NeatUndoRedo
 }
 ```
 
-## Live Example
+## Example
 
-Draw on the canvas and use the undo/redo buttons in the app bar.
+```dart
+import 'package:flutter/material.dart';
+import 'package:neat_state/neat_state.dart';
 
-<iframe
-  src="https://dartpad.dev/embed-flutter.html?id=70970fba69ad18d50c58a2f5dc2a0ca3"
-  style={{width: '100%', height: '500px', border: 'none'}}
-></iframe>
+class DrawingNotifier extends NeatNotifier<List<Offset>, void>
+    with NeatUndoRedoNotifier<List<Offset>, void> {
+  DrawingNotifier() : super([]) {
+    setupUndoRedo();
+  }
+  void addPoint(Offset point) => value = List.from(value)..add(point);
+  void clear() => value = [];
+}
+
+void main() => runApp(const MaterialApp(home: UndoRedoDemo()));
+
+class UndoRedoDemo extends StatelessWidget {
+  const UndoRedoDemo({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return NeatState(
+      create: (_) => DrawingNotifier(),
+      builder: (context, points, _) {
+        final notifier = context.read<DrawingNotifier>();
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Undo/Redo Canvas'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.undo),
+                onPressed: notifier.canUndo ? notifier.undo : null,
+              ),
+              IconButton(
+                icon: const Icon(Icons.redo),
+                onPressed: notifier.canRedo ? notifier.redo : null,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: notifier.clear,
+              ),
+            ],
+          ),
+          body: GestureDetector(
+            onPanUpdate: (details) => notifier.addPoint(details.localPosition),
+            child: CustomPaint(
+              painter: SimplePainter(points),
+              size: Size.infinite,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SimplePainter extends CustomPainter {
+  final List<Offset> points;
+  SimplePainter(this.points);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 4.0
+      ..strokeCap = StrokeCap.round;
+    for (int i = 0; i < points.length - 1; i++) {
+      canvas.drawLine(points[i], points[i + 1], paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+```
