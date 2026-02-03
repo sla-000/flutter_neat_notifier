@@ -39,9 +39,6 @@ jobs:
       - name: Analyze
         run: melos analyze
 
-      - name: Run tests with coverage
-        run: melos run coverage --no-select
-
       - name: Cache apt packages
         uses: actions/cache@v4
         with:
@@ -53,8 +50,8 @@ jobs:
       - name: Install lcov
         run: sudo apt-get update && sudo apt-get install -y lcov
 
-      - name: Merge coverage files
-        run: ./scripts/merge_coverage.sh
+      - name: Run tests with coverage
+        run: melos run coverage --no-select
 
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v2
