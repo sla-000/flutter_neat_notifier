@@ -5,7 +5,8 @@
 
 ## Why neat_state?
 
-- **Zero Boilerplate**: No need to create separate classes for events or state if you don't want to.
+- **Simple Usage**: The API is straightforward—you don't need to memorize a complex vocabulary of class names.
+- **Non-intrusive**: It respects standard Flutter architecture. You don't need to extend your Widgets or States with special base classes.
 - **Familiar API**: If you know `ValueNotifier`, you know `neat_state`.
 - **Built-in Async**: Native support for loading states and error handling.
 - **One-time Actions**: Perfect for snackbars, navigation, or dialogs.
