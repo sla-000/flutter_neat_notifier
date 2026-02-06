@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/02_async/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/03_reading_state/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/04_listeners/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/05_persistence/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/06_undo_redo/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/07_multi_providers/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://sla-000.github.io/flutter_neat_notifier/08_advanced/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+</urlset>
