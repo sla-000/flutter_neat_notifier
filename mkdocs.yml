@@ -1,7 +1,7 @@
 site_name: NeatState Documentation
-site_url: https://username.github.io/ext_notifier
-repo_url: https://github.com/username/ext_notifier
-repo_name: ext_notifier
+site_url: https://sla-000.github.io/flutter_neat_notifier/
+repo_url: https://github.com/sla-000/flutter_neat_notifier
+repo_name: flutter_neat_notifier
 
 theme:
   name: material
@@ -24,7 +24,7 @@ theme:
         name: Switch to light mode
 
 nav:
-  - Home: 01_basics.md
+  - Basics: 01_basics.md
   - Async Operations: 02_async.md
   - Reading State: 03_reading_state.md
   - Listeners: 04_listeners.md
