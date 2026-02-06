@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Introduction
+# The Basics
 
 **neat_state** is a lightweight, feature-rich state management package for Flutter that builds upon `ValueNotifier` to provide a robust solution for handling states, one-time actions, and asynchronous operations with built-in loading and error management.
 
@@ -81,9 +81,10 @@ flutter pub add neat_state
 
 ## Next Steps
 
-- [Hydrated Notifiers](hydrated.md)
-- [Undo/Redo](undoredo.md)
-- [Async Operations](async_operations.md)
-- [Multi-State Management](multi_state.md)
-- [Context Extensions](context_extensions.md)
-- [Advanced Usage](advanced.md)
+- [Async Operations](02_async.md)
+- [Reading State efficiently](03_reading_state.md)
+- [Side Effects & Listeners](04_listeners.md)
+- [Persisting State](05_persistence.md)
+- [Undo/Redo](06_undo_redo.md)
+- [Multiple Providers](07_multi_providers.md)
+- [Advanced Usage](08_advanced.md)

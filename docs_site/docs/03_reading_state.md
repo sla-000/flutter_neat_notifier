@@ -1,4 +1,8 @@
-# Context Extensions
+---
+sidebar_position: 3
+---
+
+# Reading State
 
 `neat_state` provides a set of powerful extensions on `BuildContext` to interact with your notifiers. These extensions make it easy to access state, listen for changes, and select specific parts of the state to optimize rebuilds.
 
@@ -147,4 +151,9 @@ class SelectorExample extends StatelessWidget {
   }
 }
 ```
+
+## Next Steps
+
+- [Side Effects & Listeners](04_listeners.md)
+
 

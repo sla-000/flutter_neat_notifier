@@ -1,4 +1,8 @@
-# Multi-State Management
+---
+sidebar_position: 7
+---
+
+# Multiple Providers
 
 For applications with multiple notifiers, `NeatMultiState` helps you inject dependencies high up in the widget tree, making them accessible to all descendants.
 
@@ -38,7 +42,7 @@ NeatMultiState(
 ## Accessing State
 
 To access the state efficiently, use the provided context extensions. 
-See the [Context Extensions](context_extensions.md) page for detailed usage of `context.read`, `context.watch`, and `context.select`.
+See the [Reading State](03_reading_state.md) page for detailed usage of `context.read`, `context.watch`, and `context.select`.
 
 ## Example
 
@@ -229,3 +233,7 @@ class UserCard extends StatelessWidget {
   }
 }
 ```
+
+## Next Steps
+
+- [Advanced Usage](08_advanced.md)

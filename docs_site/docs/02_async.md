@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Async Operations
 
 `NeatNotifier` simplifies asynchronous operations with the `runTask` method. It automatically handles loading states and error capturing, allowing you to focus on your business logic.
@@ -205,4 +209,9 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
+## Next Steps
+
+- [Reading State efficiently](03_reading_state.md)
+
 

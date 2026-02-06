@@ -1,3 +1,7 @@
+---
+sidebar_position: 6
+---
+
 # Undo/Redo
 
 `NeatUndoRedoNotifier` provides a simple way to add history support to your state. It maintains a history stack and a redo stack, allowing you to move backwards and forwards through state changes.
@@ -95,3 +99,7 @@ class SimplePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 ```
+
+## Next Steps
+
+- [Multiple Providers](07_multi_providers.md)

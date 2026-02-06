@@ -1,4 +1,8 @@
-# Hydrated State
+---
+sidebar_position: 5
+---
+
+# Persisting State
 
 `NeatHydratedNotifier` adds automatic persistence to your notifiers. It saves the state to disk whenever it changes and restores it when the notifier is initialized.
 
@@ -83,3 +87,7 @@ class MyApp extends StatelessWidget {
 :::tip
 In a real application, you would use a persistent storage like `shared_preferences` or `hive`. See the [Advanced Patterns](https://github.com/sla-000/flutter_neat_notifier/tree/main/example_advanced) folder for a storage implementation using `path_provider`.
 :::
+
+## Next Steps
+
+- [Undo/Redo](06_undo_redo.md)

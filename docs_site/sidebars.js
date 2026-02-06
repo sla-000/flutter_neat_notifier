@@ -16,12 +16,13 @@
  */
 const sidebars = {
   tutorialSidebar: [
-    'intro',
-    'hydrated',
-    'undoredo',
-    'async_operations',
-    'multi_state',
-    'context_extensions',
+    'basics',
+    'async',
+    'reading_state',
+    'listeners',
+    'persistence',
+    'undo_redo',
+    'multi_providers',
     'advanced',
   ],
 };
