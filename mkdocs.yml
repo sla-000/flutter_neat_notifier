@@ -24,8 +24,7 @@ theme:
         name: Switch to light mode
 
 nav:
-  - Home: index.md
-  - Basics: 01_basics.md
+  - Home: 01_basics.md
   - Async Operations: 02_async.md
   - Reading State: 03_reading_state.md
   - Listeners: 04_listeners.md
